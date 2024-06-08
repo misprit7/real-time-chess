@@ -3073,7 +3073,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "6d7fd60b-a65f-4710-a6fe-5538ad97823e")
+			(uuid "6d7fd60b-a65f-4710-a6fe-5538ad97823f")
 		)
 		(instances
 			(project "kfchess"
@@ -3601,7 +3601,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "6d7fd60b-a65f-4710-a6fe-5538ad97823e")
+			(uuid "6d7fd60b-a65f-4710-a6fe-5538ad978240")
 		)
 		(instances
 			(project "kfchess"

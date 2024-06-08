@@ -480,7 +480,7 @@
       "netlist": "",
       "plot": "",
       "pos_files": "",
-      "specctra_dsn": "",
+      "specctra_dsn": "kfchess.dsn",
       "step": "",
       "svg": "",
       "vrml": ""
