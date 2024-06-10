@@ -1987,7 +1987,7 @@
 		)
 		(uuid "2f5cbd0e-e36e-45e4-9e41-40c8f2ca5f35")
 	)
-	(label "c33"
+	(label "c43"
 		(at 237.49 63.5 180)
 		(fields_autoplaced yes)
 		(effects
@@ -2108,7 +2108,7 @@
 		)
 		(uuid "5817c5a4-9d0a-40ba-956a-7c96261e1cb9")
 	)
-	(label "c31"
+	(label "c41"
 		(at 237.49 58.42 180)
 		(fields_autoplaced yes)
 		(effects
@@ -2383,7 +2383,7 @@
 		)
 		(uuid "ad641f34-255d-4b54-8812-5e2b0ca8c7e7")
 	)
-	(label "c34"
+	(label "c44"
 		(at 237.49 66.04 180)
 		(fields_autoplaced yes)
 		(effects
@@ -2493,7 +2493,7 @@
 		)
 		(uuid "d97b12d2-88aa-471d-bf69-6c884d11693a")
 	)
-	(label "c32"
+	(label "c42"
 		(at 237.49 60.96 180)
 		(fields_autoplaced yes)
 		(effects
