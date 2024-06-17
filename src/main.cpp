@@ -11,6 +11,35 @@
 
 #include "arduinoFFT.h"
 #include "core_pins.h"
+#include <WS2812Serial.h>
+
+// ws2812Serial
+const int numled = 128;
+const int pin = 1;
+
+byte drawingMemory[numled*3];         //  3 bytes per LED
+DMAMEM byte displayMemory[numled*12]; // 12 bytes per LED
+
+WS2812Serial leds(numled, displayMemory, drawingMemory, pin, WS2812_GRB);
+
+/*#define RED    0xFF0000*/
+/*#define GREEN  0x00FF00*/
+/*#define BLUE   0x0000FF*/
+/*#define YELLOW 0xFFFF00*/
+/*#define PINK   0xFF1088*/
+/*#define ORANGE 0xE05800*/
+/*#define WHITE  0xFFFFFF*/
+
+// Less intense...
+#define RED    0x160000
+#define GREEN  0x001600
+#define BLUE   0x000016
+#define YELLOW 0x101400
+#define PINK   0x120009
+#define ORANGE 0x100400
+#define WHITE  0x101010
+
+
 
 /*
 These values can be changed in order to evaluate the functions
@@ -82,21 +111,51 @@ long t_start = 0;
 
 void setup()
 {
-    pinMode(22, OUTPUT);
-    sampling_period_us = round(1000000*(1.0/samplingFrequency));
-    Serial.begin(115200);
-    /* while (!Serial); */ 
-    Serial.println("Ready");
-    pinMode(lift_pin, OUTPUT);
-    digitalWrite(lift_pin, 0);
-    t_input = micros();
-    t_output = micros();
-    t_last_print = micros();
-    t_start = micros();
+    /*pinMode(22, OUTPUT);*/
+    /*sampling_period_us = round(1000000*(1.0/samplingFrequency));*/
+    /*Serial.begin(115200);*/
+    /*Serial.println("Ready");*/
+    /*pinMode(lift_pin, OUTPUT);*/
+    /*digitalWrite(lift_pin, 0);*/
+    /*t_input = micros();*/
+    /*t_output = micros();*/
+    /*t_last_print = micros();*/
+    /*t_start = micros();*/
+    pinMode(13, OUTPUT);
+    leds.begin();
+}
+
+
+void colorWipe(int color, int wait) {
+    for (int i=0; i < leds.numPixels(); i++) {
+        leds.setPixel(i, color);
+        leds.show();
+        delayMicroseconds(wait);
+    }
 }
 
 void loop()
 {
+    /*digitalWrite(13, HIGH);*/
+    /*delay(1000);*/
+    /*digitalWrite(13, LOW);*/
+    /*delay(1000);*/
+    /**/
+    /*return;*/
+
+    // change all the LEDs in 1.5 seconds
+    int microsec = 1500000 / leds.numPixels();
+
+    colorWipe(RED, microsec);
+    colorWipe(GREEN, microsec);
+    colorWipe(BLUE, microsec);
+    colorWipe(YELLOW, microsec);
+    colorWipe(PINK, microsec);
+    colorWipe(ORANGE, microsec);
+    colorWipe(WHITE, microsec);
+
+    return;
+
     /* Serial.println(analogRead(CHANNEL)); */
     /* delay(10); */
     /* return; */
