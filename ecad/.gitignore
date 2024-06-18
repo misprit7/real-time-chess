@@ -1,4 +1,6 @@
 jlcpcb/
+*.lck
+*.log
 
 # Temporary files
 *.000
