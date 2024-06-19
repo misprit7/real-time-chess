@@ -38,7 +38,27 @@
  * Config
  ******************************************************************************/
 
+/*#define RED    0xFF0000*/
+/*#define GREEN  0x00FF00*/
+/*#define BLUE   0x0000FF*/
+/*#define YELLOW 0xFFFF00*/
+/*#define PINK   0xFF1088*/
+/*#define ORANGE 0xE05800*/
+/*#define WHITE  0xFFFFFF*/
+
+// Less intense...
+#define RED    0x160000
+#define GREEN  0x001600
+#define BLUE   0x000016
+#define YELLOW 0x101400
+#define PINK   0x120009
+#define ORANGE 0x100400
+#define WHITE  0x101010
+#define OFF    0x000000
+
 const int cooldown_ms = 10'000;
+int plr_clrs[2] = {RED, BLUE};
+
 
 /******************************************************************************
  * Hardware Definitions
@@ -77,28 +97,10 @@ DMAMEM byte displayMemory[numled*12]; // 12 bytes per LED
 WS2812Serial leds(numled, displayMemory, drawingMemory, led_pin, WS2812_GRB);
 SemaphoreHandle_t leds_mut;
 
-/*#define RED    0xFF0000*/
-/*#define GREEN  0x00FF00*/
-/*#define BLUE   0x0000FF*/
-/*#define YELLOW 0xFFFF00*/
-/*#define PINK   0xFF1088*/
-/*#define ORANGE 0xE05800*/
-/*#define WHITE  0xFFFFFF*/
-
-// Less intense...
-#define RED    0x160000
-#define GREEN  0x001600
-#define BLUE   0x000016
-#define YELLOW 0x101400
-#define PINK   0x120009
-#define ORANGE 0x100400
-#define WHITE  0x101010
-#define OFF    0x000000
-
 /******************************************************************************
  * FFT
  ******************************************************************************/
-const float freq_sample = 5000; //Hz, must be less than 10000 due to ADC
+const float freq_sample = 3000; //Hz, must be less than 10000 due to ADC
 double freq_output[2] = { 500, 750 };
 unsigned int sampling_period_us;
 
@@ -150,17 +152,15 @@ static void square_task(void *params) {
     sampling_period_us = round(1000000*(1.0/freq_sample));
     /*pinMode(lift_pin, arduino::OUTPUT);*/
     /*digitalWrite(lift_pin, 0);*/
-    if(idx == 1){
-        vTaskDelay(pdMS_TO_TICKS(1147));
-    }
 
     TickType_t last_wake = xTaskGetTickCount();
     TickType_t last_print = xTaskGetTickCount();
     TickType_t last_led = xTaskGetTickCount();
 
-    TickType_t last_touch = xTaskGetTickCount();
+    TickType_t last_touch[2] = {0, 0};
 
-    Goertzel goertzel(freq_output[0], freq_sample, 100);
+
+    Goertzel goertzels[2] = { Goertzel(freq_output[0], freq_sample, 100), Goertzel(freq_output[1], freq_sample, 100) };
     for ever {
         TickType_t cur_tick = xTaskGetTickCount();
         float sample = 0;
@@ -169,28 +169,32 @@ static void square_task(void *params) {
             xSemaphoreGive(adc_mut);
         }
         /*Serial.println(analogRead(sens_pins[0]));*/
-        goertzel.addSample(sample);
-        if(goertzel.getMagnitude() > 25){
-            last_touch = cur_tick;
+        for(int p = 0; p < 2; ++p){
+            goertzels[p].addSample(sample);
+            if(goertzels[p].getMagnitude() > 25){
+                last_touch[p] = cur_tick;
+            }
         }
 
         if(cur_tick - last_print >= pdMS_TO_TICKS(500)){
             Serial.print(idx);
             Serial.print(", ");
-            Serial.print(goertzel.getMagnitude());
+            Serial.print(goertzels[0].getMagnitude());
             Serial.print(", ");
             Serial.println(sample);
             last_print = cur_tick;
         }
 
-        if(cur_tick - last_touch <= pdMS_TO_TICKS(cooldown_ms) && cur_tick - last_led >= pdMS_TO_TICKS(100)){
-            for (int i=0; i < 8; i++) {
-                if(xSemaphoreTake(leds_mut, pdMS_TO_TICKS(100))){
-                    leds.setPixel(8*idx + i, i < 8.0*pdTICKS_TO_MS(cur_tick - last_touch)/cooldown_ms ? OFF : WHITE);
-                    xSemaphoreGive(leds_mut);
-                } else Serial.println("Failed to take mutex!");
+        for(int p = 0; p < 2; ++p){
+            if(cur_tick - last_touch[p] <= pdMS_TO_TICKS(cooldown_ms) && cur_tick - last_led >= pdMS_TO_TICKS(100)){
+                for (int i=0; i < 8; i++) {
+                    if(xSemaphoreTake(leds_mut, pdMS_TO_TICKS(100))){
+                        leds.setPixel(8*idx + i, i < 8.0*pdTICKS_TO_MS(cur_tick - last_touch[p])/cooldown_ms ? OFF : plr_clrs[p]);
+                        xSemaphoreGive(leds_mut);
+                    } else Serial.println("Failed to take mutex!");
+                }
+                last_led = cur_tick;
             }
-            last_led = cur_tick;
         }
 
         vTaskDelayUntil(&last_wake, pdUS_TO_TICKS(sampling_period_us));
@@ -239,8 +243,8 @@ FLASHMEM __attribute__((noinline)) void setup() {
     xTaskCreate(freq_output_task, "freq_output_task_1", 1024, &freq_idx[0], 2, nullptr);
     xTaskCreate(freq_output_task, "freq_output_task_2", 1024, &freq_idx[1], 2, nullptr);
 
-    static int square_idx[16];
-    for(int i = 0; i < 2; ++i){
+    static int square_idx[n_sqr];
+    for(int i = 0; i < 16; ++i){
         square_idx[i] = i;
         xTaskCreate(square_task, "square_task", 2048, &square_idx[i], 2, nullptr);
     }

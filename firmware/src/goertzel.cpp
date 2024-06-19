@@ -9,9 +9,9 @@ Goertzel::Goertzel(double targetFreq, double sampleRate, size_t windowSize)
 void Goertzel::addSample(double sample) {
     // Chatgpt suggested subtracting old sample here, voodoo magic
     // I do not understand why that works but it does
-    double q0 = coeff * s1 - s2 + sample - samples[currentIndex];
+    double s = coeff * s1 - s2 + sample - samples[currentIndex];
     s2 = s1;
-    s1 = q0;
+    s1 = s;
     samples[currentIndex] = sample;
     currentIndex = (currentIndex + 1) % windowSize;
 }
