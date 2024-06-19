@@ -1,0 +1,41 @@
+{
+  "name": "freertos-teensy",
+  "keywords": "FreeRTOS, Teensy",
+  "description": "FreeRTOS port for Teensy 3.5, 3.6, 4.0, 4.1",
+  "license": "MIT",
+  "homepage": "https://www.freertos.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tsandmann/freertos-teensy"
+  },
+  "version": "11.0.1-1",
+  "authors": [
+    {
+      "name": "Richard Barry",
+      "email": "info@freertos.org"
+    },
+    {
+      "name": "Piotr Grygorczuk",
+      "email": "grygorek@gmail.com"
+    },
+    {
+      "name": "Timo Sandmann",
+      "maintainer": true
+    }
+  ],
+  "frameworks": "arduino",
+  "platforms": [ "teensy", "teensy-ts" ],
+  "build": {
+    "flags": [
+      "-Ilib/cpp/src/bits",
+      "-Ilib/cpp/src",
+      "-I../../../../src"
+    ],
+    "srcFilter": [
+      "+<../lib/cpp/src/bits/*>",
+      "+<../lib/cpp/src/*>",
+      "+<../lib/gcc/*>",
+      "+<*>"
+    ]
+  }
+}
