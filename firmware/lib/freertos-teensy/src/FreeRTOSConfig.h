@@ -53,7 +53,7 @@ extern "C" {
 #define configUSE_TICKLESS_IDLE                     0
 #define configCPU_CLOCK_HZ                          ( F_CPU )
 #define configSYSTICK_CLOCK_HZ                      ( 100000UL )
-#define configTICK_RATE_HZ                          ( (TickType_t) 10000 )
+#define configTICK_RATE_HZ                          ( (TickType_t) 20000 )
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION     1
 #define configMAX_PRIORITIES                        ( 10 )
 #define configMINIMAL_STACK_SIZE                    ( ( unsigned short ) 128 )
