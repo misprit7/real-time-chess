@@ -1,6 +1,3 @@
-/*#include "Arduino.h"*/
-#include "arduino_freertos.h"
-#include "avr/pgmspace.h"
 
 // There are two speedup options for some of the FFT code:
 
@@ -11,11 +8,24 @@
 // This might only work for specific use cases, but is significantly faster. Only works for ArduinoFFT<float>.
 //#define FFT_SQRT_APPROXIMATION
 
+/******************************************************************************
+ * Includes
+ ******************************************************************************/
+
+/*#include "Arduino.h"*/
+#include "arduino_freertos.h"
+#include "avr/pgmspace.h"
 #include "arduinoFFT.h"
 #include "core_pins.h"
 #include <WS2812Serial.h>
 
-// ws2812Serial
+/******************************************************************************
+ * Hardware Definitions
+ ******************************************************************************/
+
+/******************************************************************************
+ * ws2812Serial
+ ******************************************************************************/
 const int numled = 128;
 const int pin = 1;
 
@@ -40,12 +50,11 @@ WS2812Serial leds(numled, displayMemory, drawingMemory, pin, WS2812_GRB);
 #define PINK   0x120009
 #define ORANGE 0x100400
 #define WHITE  0x101010
+#define OFF    0x000000
 
-
-
-/*
-These values can be changed in order to evaluate the functions
-*/
+/******************************************************************************
+ * FFT
+ ******************************************************************************/
 const uint8_t input_pin = A9;
 const uint16_t n_samples = 64; //This value MUST ALWAYS be a power of 2
 const float samplingFrequency = 5000; //Hz, must be less than 10000 due to ADC
@@ -79,10 +88,15 @@ long t_input = 0;
 int input_idx = 0;
 
 long t_last_print = 0;
+long t_start = 0;
 
 const int lift_pin = 0;
 
-void PrintVector(float *vData, uint16_t bufferSize, uint8_t scaleType)
+/******************************************************************************
+ * Helper functions
+ ******************************************************************************/
+
+void print_vector(float *vData, uint16_t bufferSize, uint8_t scaleType)
 {
     for (uint16_t i = 0; i < bufferSize; i++)
     {
@@ -109,9 +123,19 @@ void PrintVector(float *vData, uint16_t bufferSize, uint8_t scaleType)
     Serial.println();
 }
 
-long t_start = 0;
+void color_wipe(int color, int wait_ms) {
+    for (int i=0; i < leds.numPixels(); i++) {
+        leds.setPixel(i, color);
+        leds.show();
+        vTaskDelay(pdMS_TO_TICKS(wait_ms));
+    }
+}
 
-static void task1(void*) {
+/******************************************************************************
+ * Tasks
+ ******************************************************************************/
+
+static void blink_task(void*) {
     pinMode(arduino::LED_BUILTIN, arduino::OUTPUT);
     while (true) {
         digitalWriteFast(arduino::LED_BUILTIN, arduino::LOW);
@@ -122,89 +146,29 @@ static void task1(void*) {
     }
 }
 
-static void task2(void*) {
-    Serial.begin(0);
+static void led_task(void *params) {
+    int idx = *((int*) params);
     while (true) {
-        Serial.println("TICK");
-        vTaskDelay(pdMS_TO_TICKS(1'000));
+        int delay_ms = 1500 / leds.numPixels();
 
-        Serial.println("TOCK");
-        vTaskDelay(pdMS_TO_TICKS(1'000));
-    }
-}
-
-FLASHMEM __attribute__((noinline)) void setup() {
-    Serial.begin(0);
-    delay(2'000);
-
-    if (CrashReport) {
-        Serial.print(CrashReport);
-        Serial.println();
-        Serial.flush();
-    }
-
-    Serial.println(PSTR("\r\nBooting FreeRTOS kernel " tskKERNEL_VERSION_NUMBER ". Built by gcc " __VERSION__ " (newlib " _NEWLIB_VERSION ") on " __DATE__ ". ***\r\n"));
-
-    xTaskCreate(task1, "task1", 128, nullptr, 2, nullptr);
-    xTaskCreate(task2, "task2", 128, nullptr, 2, nullptr);
-
-    Serial.println("setup(): starting scheduler...");
-    Serial.flush();
-
-    vTaskStartScheduler();
-}
-
-void loop() {}
-
-void setup1()
-{
-    /*pinMode(22, OUTPUT);*/
-    /*sampling_period_us = round(1000000*(1.0/samplingFrequency));*/
-    /*Serial.begin(115200);*/
-    /*Serial.println("Ready");*/
-    /*pinMode(lift_pin, OUTPUT);*/
-    /*digitalWrite(lift_pin, 0);*/
-    /*t_input = micros();*/
-    /*t_output = micros();*/
-    /*t_last_print = micros();*/
-    /*t_start = micros();*/
-    pinMode(13, arduino::OUTPUT);
-    leds.begin();
-}
-
-
-void colorWipe(int color, int wait) {
-    for (int i=0; i < leds.numPixels(); i++) {
-        leds.setPixel(i, color);
+        for (int i=0; i < 8; i++) {
+            leds.setPixel(8*idx + i, idx % 2 == 0 ? RED : GREEN);
+        }
         leds.show();
-        delayMicroseconds(wait);
+        vTaskDelay(pdMS_TO_TICKS(1000));
+
+        /*color_wipe(RED, delay_ms);*/
+        /*color_wipe(GREEN, delay_ms);*/
+        /*color_wipe(BLUE, delay_ms);*/
+        /*color_wipe(YELLOW, delay_ms);*/
+        /*color_wipe(PINK, delay_ms);*/
+        /*color_wipe(ORANGE, delay_ms);*/
+        /*color_wipe(WHITE, delay_ms);*/
     }
 }
 
-void loop1()
-{
-    /*digitalWrite(13, HIGH);*/
-    /*delay(1000);*/
-    /*digitalWrite(13, LOW);*/
-    /*delay(1000);*/
-    /**/
-    /*return;*/
-
-    // change all the LEDs in 1.5 seconds
-    int microsec = 1500000 / leds.numPixels();
-
-    colorWipe(RED, microsec);
-    colorWipe(GREEN, microsec);
-    colorWipe(BLUE, microsec);
-    colorWipe(YELLOW, microsec);
-    colorWipe(PINK, microsec);
-    colorWipe(ORANGE, microsec);
-    colorWipe(WHITE, microsec);
-
-    return;
-
+static void fft_task(void*) {
     /* Serial.println(analogRead(CHANNEL)); */
-    /* delay(10); */
     /* return; */
     /*SAMPLING*/
 
@@ -273,5 +237,48 @@ void loop1()
     }
 
 
-    /* delay(100); */
 }
+
+/******************************************************************************
+ * Arduino Setup/Loop
+ ******************************************************************************/
+
+FLASHMEM __attribute__((noinline)) void setup() {
+    Serial.begin(115200);
+    delay(2'000);
+
+    if (CrashReport) {
+        Serial.print(CrashReport);
+        Serial.println();
+        Serial.flush();
+    }
+
+    Serial.println(PSTR("\r\nBooting FreeRTOS kernel " tskKERNEL_VERSION_NUMBER ". Built by gcc " __VERSION__ " (newlib " _NEWLIB_VERSION ") on " __DATE__ ". ***\r\n"));
+
+    xTaskCreate(blink_task, "blink_task", 128, nullptr, 2, nullptr);
+
+    static int square_idx[16];
+    for(int i = 0; i < 16; ++i){
+        square_idx[i] = i;
+        xTaskCreate(led_task, "led_task", 128, &square_idx[i], 2, nullptr);
+    }
+
+    Serial.println("setup(): starting scheduler...");
+    Serial.flush();
+
+    /*pinMode(22, OUTPUT);*/
+    /*sampling_period_us = round(1000000*(1.0/samplingFrequency));*/
+    /*pinMode(lift_pin, OUTPUT);*/
+    /*digitalWrite(lift_pin, 0);*/
+    /*t_input = micros();*/
+    /*t_output = micros();*/
+    /*t_last_print = micros();*/
+    /*t_start = micros();*/
+    pinMode(13, arduino::OUTPUT);
+    leds.begin();
+
+    vTaskStartScheduler();
+}
+
+void loop() {}
+
