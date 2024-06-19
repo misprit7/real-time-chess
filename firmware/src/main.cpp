@@ -60,6 +60,7 @@ int sens_pins[n_sqr] = {
     22, 23, 24, 25,
     26, 27, 38, 39
 };
+SemaphoreHandle_t adc_mut;
 
 int freq_pins[2] = { 2, 3 };
 
@@ -134,7 +135,7 @@ static void led_task(void*){
         xSemaphoreTake(leds_mut, portMAX_DELAY);
         leds.show();
         xSemaphoreGive(leds_mut);
-        vTaskDelay(pdMS_TO_TICKS(500));
+        vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
 
@@ -149,6 +150,9 @@ static void square_task(void *params) {
     sampling_period_us = round(1000000*(1.0/freq_sample));
     /*pinMode(lift_pin, arduino::OUTPUT);*/
     /*digitalWrite(lift_pin, 0);*/
+    if(idx == 1){
+        vTaskDelay(pdMS_TO_TICKS(1147));
+    }
 
     TickType_t last_wake = xTaskGetTickCount();
     TickType_t last_print = xTaskGetTickCount();
@@ -159,7 +163,11 @@ static void square_task(void *params) {
     Goertzel goertzel(freq_output[0], freq_sample, 100);
     for ever {
         TickType_t cur_tick = xTaskGetTickCount();
-        double sample = analogRead(sens_pins[idx])*3.3/1024;
+        float sample = 0;
+        if(xSemaphoreTake(adc_mut, pdMS_TO_TICKS(100))){
+            sample = analogRead(sens_pins[idx])*3.3/1024;
+            xSemaphoreGive(adc_mut);
+        }
         /*Serial.println(analogRead(sens_pins[0]));*/
         goertzel.addSample(sample);
         if(goertzel.getMagnitude() > 25){
@@ -221,6 +229,7 @@ FLASHMEM __attribute__((noinline)) void setup() {
     Serial.println(PSTR("\r\nBooting FreeRTOS kernel " tskKERNEL_VERSION_NUMBER ". Built by gcc " __VERSION__ " (newlib " _NEWLIB_VERSION ") on " __DATE__ ". ***\r\n"));
 
     leds_mut = xSemaphoreCreateMutex();
+    adc_mut = xSemaphoreCreateMutex();
 
     xTaskCreate(blink_task, "blink_task", 1024, nullptr, 2, nullptr);
 
@@ -233,7 +242,7 @@ FLASHMEM __attribute__((noinline)) void setup() {
     static int square_idx[16];
     for(int i = 0; i < 2; ++i){
         square_idx[i] = i;
-        xTaskCreate(square_task, "square_task", 1024, &square_idx[i], 2, nullptr);
+        xTaskCreate(square_task, "square_task", 2048, &square_idx[i], 2, nullptr);
     }
 
     Serial.println("setup(): starting scheduler...");
