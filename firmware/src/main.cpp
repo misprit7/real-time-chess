@@ -132,12 +132,16 @@ static void blink_task(void*) {
     }
 }
 
-static void led_task(void*){
+static void led_task(void*) {
     for ever {
-        xSemaphoreTake(leds_mut, portMAX_DELAY);
-        leds.show();
-        xSemaphoreGive(leds_mut);
-        vTaskDelay(pdMS_TO_TICKS(50));
+        if(xSemaphoreTake(leds_mut, pdMS_TO_TICKS(100))){
+            leds.setPixel(0, WHITE);
+            leds.show();
+            xSemaphoreGive(leds_mut);
+        } else {
+            Serial.println("LED mutex failed!");
+        }
+        vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
 
@@ -176,7 +180,7 @@ static void square_task(void *params) {
             }
         }
 
-        if(cur_tick - last_print >= pdMS_TO_TICKS(500)){
+        if(cur_tick - last_print >= pdMS_TO_TICKS(500) && idx == 0){
             Serial.print(idx);
             Serial.print(", ");
             Serial.print(goertzels[0].getMagnitude());
@@ -189,9 +193,10 @@ static void square_task(void *params) {
             if(cur_tick - last_touch[p] <= pdMS_TO_TICKS(cooldown_ms) && cur_tick - last_led >= pdMS_TO_TICKS(100)){
                 for (int i=0; i < 8; i++) {
                     if(xSemaphoreTake(leds_mut, pdMS_TO_TICKS(100))){
-                        leds.setPixel(8*idx + i, i < 8.0*pdTICKS_TO_MS(cur_tick - last_touch[p])/cooldown_ms ? OFF : plr_clrs[p]);
+                        /*leds.setPixel(8*idx + i, i < 8.0*pdTICKS_TO_MS(cur_tick - last_touch[p])/cooldown_ms ? OFF : plr_clrs[p]);*/
+                        leds.setPixel(8*idx + i, WHITE);
                         xSemaphoreGive(leds_mut);
-                    } else Serial.println("Failed to take mutex!");
+                    } else Serial.println("Failed to take led mutex!");
                 }
                 last_led = cur_tick;
             }
@@ -231,6 +236,7 @@ FLASHMEM __attribute__((noinline)) void setup() {
     }
 
     Serial.println(PSTR("\r\nBooting FreeRTOS kernel " tskKERNEL_VERSION_NUMBER ". Built by gcc " __VERSION__ " (newlib " _NEWLIB_VERSION ") on " __DATE__ ". ***\r\n"));
+
 
     leds_mut = xSemaphoreCreateMutex();
     adc_mut = xSemaphoreCreateMutex();
