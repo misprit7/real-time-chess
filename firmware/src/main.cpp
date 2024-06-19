@@ -1,4 +1,6 @@
-#include "Arduino.h"
+/*#include "Arduino.h"*/
+#include "arduino_freertos.h"
+#include "avr/pgmspace.h"
 
 // There are two speedup options for some of the FFT code:
 
@@ -109,7 +111,52 @@ void PrintVector(float *vData, uint16_t bufferSize, uint8_t scaleType)
 
 long t_start = 0;
 
-void setup()
+static void task1(void*) {
+    pinMode(arduino::LED_BUILTIN, arduino::OUTPUT);
+    while (true) {
+        digitalWriteFast(arduino::LED_BUILTIN, arduino::LOW);
+        vTaskDelay(pdMS_TO_TICKS(500));
+
+        digitalWriteFast(arduino::LED_BUILTIN, arduino::HIGH);
+        vTaskDelay(pdMS_TO_TICKS(500));
+    }
+}
+
+static void task2(void*) {
+    Serial.begin(0);
+    while (true) {
+        Serial.println("TICK");
+        vTaskDelay(pdMS_TO_TICKS(1'000));
+
+        Serial.println("TOCK");
+        vTaskDelay(pdMS_TO_TICKS(1'000));
+    }
+}
+
+FLASHMEM __attribute__((noinline)) void setup() {
+    Serial.begin(0);
+    delay(2'000);
+
+    if (CrashReport) {
+        Serial.print(CrashReport);
+        Serial.println();
+        Serial.flush();
+    }
+
+    Serial.println(PSTR("\r\nBooting FreeRTOS kernel " tskKERNEL_VERSION_NUMBER ". Built by gcc " __VERSION__ " (newlib " _NEWLIB_VERSION ") on " __DATE__ ". ***\r\n"));
+
+    xTaskCreate(task1, "task1", 128, nullptr, 2, nullptr);
+    xTaskCreate(task2, "task2", 128, nullptr, 2, nullptr);
+
+    Serial.println("setup(): starting scheduler...");
+    Serial.flush();
+
+    vTaskStartScheduler();
+}
+
+void loop() {}
+
+void setup1()
 {
     /*pinMode(22, OUTPUT);*/
     /*sampling_period_us = round(1000000*(1.0/samplingFrequency));*/
@@ -121,7 +168,7 @@ void setup()
     /*t_output = micros();*/
     /*t_last_print = micros();*/
     /*t_start = micros();*/
-    pinMode(13, OUTPUT);
+    pinMode(13, arduino::OUTPUT);
     leds.begin();
 }
 
@@ -134,7 +181,7 @@ void colorWipe(int color, int wait) {
     }
 }
 
-void loop()
+void loop1()
 {
     /*digitalWrite(13, HIGH);*/
     /*delay(1000);*/
