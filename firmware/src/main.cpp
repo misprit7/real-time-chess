@@ -24,6 +24,13 @@
 #include "wiring.h"
 #include <WS2812Serial.h>
 
+#include "goertzel.h"
+
+#include <Arduino.h>
+#include <vector>
+#include <cmath>
+#include <complex>
+
 #define ever (;;)
 
 /******************************************************************************
@@ -83,7 +90,8 @@ WS2812Serial leds(numled, displayMemory, drawingMemory, led_pin, WS2812_GRB);
  * FFT
  ******************************************************************************/
 const uint16_t n_samples = 64; //This value MUST ALWAYS be a power of 2
-const float samplingFrequency = 5000; //Hz, must be less than 10000 due to ADC
+const float freq_sample = 5000; //Hz, must be less than 10000 due to ADC
+const double freq_output = 500;
 unsigned int sampling_period_us;
 unsigned long t_us;
 
@@ -97,14 +105,13 @@ float vImag[n_samples];
 float freq[n_samples/2];
 
 /* Create FFT object with weighing factor storage */
-ArduinoFFT<float> FFT = ArduinoFFT<float>(vReal, vImag, n_samples, samplingFrequency, true);
+ArduinoFFT<float> FFT = ArduinoFFT<float>(vReal, vImag, n_samples, freq_sample, true);
 
 #define SCL_INDEX 0x00
 #define SCL_TIME 0x01
 #define SCL_FREQUENCY 0x02
 #define SCL_PLOT 0x03
 
-const double freq_output = 900;
 long t_output = 0;
 
 
@@ -132,10 +139,10 @@ void print_vector(float *vData, uint16_t bufferSize, uint8_t scaleType)
                 abscissa = (i * 1.0);
         break;
             case SCL_TIME:
-                abscissa = ((i * 1.0) / samplingFrequency);
+                abscissa = ((i * 1.0) / freq_sample);
         break;
             case SCL_FREQUENCY:
-                abscissa = ((i * 1.0 * samplingFrequency) / n_samples);
+                abscissa = ((i * 1.0 * freq_sample) / n_samples);
         break;
         }
         Serial.print(abscissa, 6);
@@ -145,6 +152,19 @@ void print_vector(float *vData, uint16_t bufferSize, uint8_t scaleType)
         Serial.println(vData[i], 4);
     }
     Serial.println();
+}
+
+std::complex<float> dft_for_frequency(const float* input, size_t N, float freq, float sampleRate) {
+    std::complex<float> result(0.0, 0.0);
+    const float pi = 3.14159265358979323846;
+
+    for (size_t n = 0; n < N; ++n) {
+        float angle = -2.0 * pi * freq * n / sampleRate;
+        std::complex<float> expTerm(cos(angle), sin(angle));
+        result += input[n] * expTerm;
+    }
+
+    return result;
 }
 
 void color_wipe(int color, int wait_ms) {
@@ -203,11 +223,19 @@ static void freq_output_task(void*) {
         output_state = !output_state;
         digitalWrite(freq_pins[0], output_state);
         vTaskDelayUntil(&last_wake, pdUS_TO_TICKS(1e6/freq_output/2));
-        /*vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(1000));*/
     }
 }
 
 static void fft_task(void*) {
+
+    sampling_period_us = round(1000000*(1.0/freq_sample));
+    pinMode(lift_pin, arduino::OUTPUT);
+    digitalWrite(lift_pin, 0);
+    t_input = micros();
+    t_output = micros();
+    t_last_print = micros();
+    t_start = micros();
+
     /* Serial.println(analogRead(CHANNEL)); */
     /* return; */
     /*SAMPLING*/
@@ -217,59 +245,60 @@ static void fft_task(void*) {
     /* } */
     /* return; */
 
+    TickType_t last_wake = xTaskGetTickCount();
+    TickType_t last_print = xTaskGetTickCount();
+    Goertzel goertzel(freq_output, freq_sample, 100);
     for ever {
-        if(micros() - t_input > sampling_period_us){
-            vReal[input_idx] = analogRead(sens_pins[0]);
-            vImag[input_idx] = 0;
+        double sample = analogRead(sens_pins[0])*3.3/1024;
+        /*Serial.println(analogRead(sens_pins[0]));*/
+        goertzel.addSample(sample);
 
-            t_input += sampling_period_us;
-            input_idx += 1;
-
-            if(input_idx >= n_samples){
-                input_idx = 0;
-
-                if(micros() - t_last_print > 100000){
-                    /* Print the results of the sampling according to time */
-                    /* Serial.println("Data:"); */
-                    /* PrintVector(vReal, n_samples, SCL_TIME); */
-                    FFT.windowing(FFTWindow::Hamming, FFTDirection::Forward); /* Weigh data */
-                    FFT.dcRemoval();
-                    /* Serial.println("Weighed data:"); */
-                    /* PrintVector(vReal, samples, SCL_TIME); */
-                    FFT.compute(FFTDirection::Forward); /* Compute FFT */
-                    /* Serial.println("Computed Real values:"); */
-                    /* PrintVector(vReal, samples, SCL_INDEX); */
-                    /* Serial.println("Computed Imaginary values:"); */
-                    /* PrintVector(vImag, samples, SCL_INDEX); */
-                    FFT.complexToMagnitude(); /* Compute magnitudes */
-                    /* Serial.println("Computed magnitudes:"); */
-                    /* PrintVector(vReal, (n_samples >> 1), SCL_FREQUENCY); */
-                    /* float x = FFT.majorPeak(); */
-                    /* Serial.println(x, 6); //Print out what frequency is the most dominant. */
-
-                    float max = 0;
-                    int maxi = 0;
-                    for(int i = 5; i < n_samples/2; ++i){
-                        if(vReal[i] > max){
-                            maxi = i;
-                            max = vReal[i];
-                        }
-                    }
-                    float df = samplingFrequency / n_samples;
-                    if(vReal[maxi] > 2000){
-                        Serial.print("Touching: ");
-                        digitalWrite(lift_pin, 1);
-                    } else {
-                        Serial.print("Not touching: ");
-                        digitalWrite(lift_pin, 0);
-                    }
-                    Serial.print(maxi * df, 6);
-                    Serial.print(", ");
-                    Serial.println(vReal[maxi]);
-                    t_last_print = micros();
-                }
-            }
+        TickType_t cur_tick = xTaskGetTickCount();
+        if(cur_tick - last_print >= pdMS_TO_TICKS(500)){
+            Serial.print(goertzel.getMagnitude());
+            Serial.print(", ");
+            Serial.println(sample);
+            last_print = cur_tick;
         }
+
+        vTaskDelayUntil(&last_wake, pdUS_TO_TICKS(sampling_period_us));
+        /*vReal[input_idx] = analogRead(sens_pins[0]);*/
+        /*vImag[input_idx] = 0;*/
+        /**/
+        /*t_input += sampling_period_us;*/
+        /*input_idx += 1;*/
+        /**/
+        /*if(input_idx >= n_samples){*/
+        /*    input_idx = 0;*/
+        /**/
+        /*    if(micros() - t_last_print > 100000){*/
+        /*        FFT.windowing(FFTWindow::Hamming, FFTDirection::Forward);*/
+        /*        FFT.dcRemoval();*/
+        /*        FFT.compute(FFTDirection::Forward);*/
+        /*        FFT.complexToMagnitude();*/
+        /**/
+        /*        float max = 0;*/
+        /*        int maxi = 0;*/
+        /*        for(int i = 5; i < n_samples/2; ++i){*/
+        /*            if(vReal[i] > max){*/
+        /*                maxi = i;*/
+        /*                max = vReal[i];*/
+        /*            }*/
+        /*        }*/
+        /*        float df = samplingFrequency / n_samples;*/
+        /*        if(vReal[maxi] > 2000){*/
+        /*            Serial.print("Touching: ");*/
+        /*            digitalWrite(lift_pin, 1);*/
+        /*        } else {*/
+        /*            Serial.print("Not touching: ");*/
+        /*            digitalWrite(lift_pin, 0);*/
+        /*        }*/
+        /*        Serial.print(maxi * df, 6);*/
+        /*        Serial.print(", ");*/
+        /*        Serial.println(vReal[maxi]);*/
+        /*        t_last_print = micros();*/
+        /*    }*/
+        /*}*/
     }
 
 }
@@ -291,7 +320,7 @@ FLASHMEM __attribute__((noinline)) void setup() {
     Serial.println(PSTR("\r\nBooting FreeRTOS kernel " tskKERNEL_VERSION_NUMBER ". Built by gcc " __VERSION__ " (newlib " _NEWLIB_VERSION ") on " __DATE__ ". ***\r\n"));
 
     xTaskCreate(blink_task, "blink_task", 1024, nullptr, 2, nullptr);
-    /*xTaskCreate(fft_task, "fft_task", 128, nullptr, 2, nullptr);*/
+    xTaskCreate(fft_task, "fft_task", 1024, nullptr, 2, nullptr);
     xTaskCreate(freq_output_task, "freq_output_task", 1024, nullptr, 2, nullptr);
 
     /*static int square_idx[16];*/
@@ -302,13 +331,6 @@ FLASHMEM __attribute__((noinline)) void setup() {
 
     Serial.println("setup(): starting scheduler...");
     Serial.flush();
-    /*sampling_period_us = round(1000000*(1.0/samplingFrequency));*/
-    /*pinMode(lift_pin, OUTPUT);*/
-    /*digitalWrite(lift_pin, 0);*/
-    /*t_input = micros();*/
-    /*t_output = micros();*/
-    /*t_last_print = micros();*/
-    /*t_start = micros();*/
     pinMode(13, arduino::OUTPUT);
     leds.begin();
 
