@@ -56,9 +56,11 @@
 #define WHITE  0x101010
 #define OFF    0x000000
 
-const int cooldown_ms = 10'000;
+const int cooldown_ms = 3'000;
+const int cooldown_tk = pdMS_TO_TICKS(cooldown_ms);
 int plr_clrs[2] = {RED, BLUE};
 
+const float goertzel_thresh = 15;
 
 /******************************************************************************
  * Hardware Definitions
@@ -98,10 +100,17 @@ WS2812Serial leds(numled, displayMemory, drawingMemory, led_pin, WS2812_GRB);
 SemaphoreHandle_t leds_mut;
 
 /******************************************************************************
+ * FreeRTOS
+ ******************************************************************************/
+
+// Hacky, but arbitrary negative ticks so don't have to wait at beginning
+int neg_tick = -pdMS_TO_TICKS(10'000);
+
+/******************************************************************************
  * FFT
  ******************************************************************************/
-const float freq_sample = 3000; //Hz, must be less than 10000 due to ADC
-double freq_output[2] = { 500, 750 };
+const float freq_sample = 1500; //Hz, must be less than 10000 due to ADC
+double freq_output[2] = { 500, 600 };
 unsigned int sampling_period_us;
 
 /******************************************************************************
@@ -135,7 +144,7 @@ static void blink_task(void*) {
 static void led_task(void*) {
     for ever {
         if(xSemaphoreTake(leds_mut, pdMS_TO_TICKS(100))){
-            leds.setPixel(0, WHITE);
+            /*leds.setPixel(0, WHITE);*/
             leds.show();
             xSemaphoreGive(leds_mut);
         } else {
@@ -154,19 +163,32 @@ static void square_task(void *params) {
         /*}*/
         /*vTaskDelay(pdMS_TO_TICKS(1000));*/
     sampling_period_us = round(1000000*(1.0/freq_sample));
-    /*pinMode(lift_pin, arduino::OUTPUT);*/
-    /*digitalWrite(lift_pin, 0);*/
+
+    pinMode(em_pins[idx], arduino::OUTPUT);
+    digitalWrite(em_pins[idx], 0);
 
     TickType_t last_wake = xTaskGetTickCount();
     TickType_t last_print = xTaskGetTickCount();
     TickType_t last_led = xTaskGetTickCount();
 
-    TickType_t last_touch[2] = {0, 0};
+    int last_touch[2] = {neg_tick, neg_tick};
+    bool cur_touch[2] = {false, false};
 
 
     Goertzel goertzels[2] = { Goertzel(freq_output[0], freq_sample, 100), Goertzel(freq_output[1], freq_sample, 100) };
     for ever {
         TickType_t cur_tick = xTaskGetTickCount();
+        bool on_cooldown[2] = {
+            cur_tick - last_touch[0] <= cooldown_tk,
+            cur_tick - last_touch[1] <= cooldown_tk,
+        };
+
+        if(on_cooldown[0] || on_cooldown[1]){
+            digitalWrite(em_pins[idx], 1);
+        } else {
+            digitalWrite(em_pins[idx], 0);
+        }
+
         float sample = 0;
         if(xSemaphoreTake(adc_mut, pdMS_TO_TICKS(100))){
             sample = analogRead(sens_pins[idx])*3.3/1024;
@@ -175,8 +197,16 @@ static void square_task(void *params) {
         /*Serial.println(analogRead(sens_pins[0]));*/
         for(int p = 0; p < 2; ++p){
             goertzels[p].addSample(sample);
-            if(goertzels[p].getMagnitude() > 25){
-                last_touch[p] = cur_tick;
+            if(!on_cooldown[p] && goertzels[p].getMagnitude() >= goertzel_thresh && goertzels[p].getMagnitude() > goertzels[!p].getMagnitude() && !cur_touch[p]){
+                if(cur_tick - last_touch[!p] <= cooldown_tk){
+                    last_touch[!p] = neg_tick;
+                } else {
+                    last_touch[p] = cur_tick;
+                }
+                cur_touch[p] = true;
+            }
+            if(goertzels[p].getMagnitude() < goertzel_thresh - 10){
+                cur_touch[p] = false;
             }
         }
 
@@ -185,21 +215,22 @@ static void square_task(void *params) {
             Serial.print(", ");
             Serial.print(goertzels[0].getMagnitude());
             Serial.print(", ");
+            Serial.print(goertzels[1].getMagnitude());
+            Serial.print(", ");
             Serial.println(sample);
             last_print = cur_tick;
         }
 
-        for(int p = 0; p < 2; ++p){
-            if(cur_tick - last_touch[p] <= pdMS_TO_TICKS(cooldown_ms) && cur_tick - last_led >= pdMS_TO_TICKS(100)){
+        if(cur_tick - last_led >= pdMS_TO_TICKS(50)){
+            if(xSemaphoreTake(leds_mut, pdMS_TO_TICKS(100))){
+                int p = on_cooldown[0] ? 0 : 1;
                 for (int i=0; i < 8; i++) {
-                    if(xSemaphoreTake(leds_mut, pdMS_TO_TICKS(100))){
-                        /*leds.setPixel(8*idx + i, i < 8.0*pdTICKS_TO_MS(cur_tick - last_touch[p])/cooldown_ms ? OFF : plr_clrs[p]);*/
-                        leds.setPixel(8*idx + i, WHITE);
-                        xSemaphoreGive(leds_mut);
-                    } else Serial.println("Failed to take led mutex!");
+                    leds.setPixel(8*idx + i, i < 8.0*(cur_tick - last_touch[p])/cooldown_tk - 0.8 ? OFF : plr_clrs[p]);
+                    /*leds.setPixel(8*idx + i, WHITE);*/
                 }
-                last_led = cur_tick;
-            }
+                xSemaphoreGive(leds_mut);
+            } else Serial.println("Failed to take led mutex!");
+            last_led = cur_tick;
         }
 
         vTaskDelayUntil(&last_wake, pdUS_TO_TICKS(sampling_period_us));
@@ -241,7 +272,7 @@ FLASHMEM __attribute__((noinline)) void setup() {
     leds_mut = xSemaphoreCreateMutex();
     adc_mut = xSemaphoreCreateMutex();
 
-    xTaskCreate(blink_task, "blink_task", 1024, nullptr, 2, nullptr);
+    /*xTaskCreate(blink_task, "blink_task", 1024, nullptr, 2, nullptr);*/
 
     xTaskCreate(led_task, "led_task", 1024, nullptr, 2, nullptr);
 
@@ -257,7 +288,6 @@ FLASHMEM __attribute__((noinline)) void setup() {
 
     Serial.println("setup(): starting scheduler...");
     Serial.flush();
-    pinMode(13, arduino::OUTPUT);
     leds.begin();
 
     vTaskStartScheduler();
