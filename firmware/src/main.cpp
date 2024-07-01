@@ -256,9 +256,11 @@ static void freq_output_task(void *params) {
  * Arduino Setup/Loop
  ******************************************************************************/
 
-FLASHMEM __attribute__((noinline)) void setup() {
+FLASHMEM __attribute__((noinline))
+void setup() {
     Serial.begin(115200);
     delay(200);
+
 
     if (CrashReport) {
         Serial.print(CrashReport);
@@ -272,7 +274,7 @@ FLASHMEM __attribute__((noinline)) void setup() {
     leds_mut = xSemaphoreCreateMutex();
     adc_mut = xSemaphoreCreateMutex();
 
-    /*xTaskCreate(blink_task, "blink_task", 1024, nullptr, 2, nullptr);*/
+    xTaskCreate(blink_task, "blink_task", 1024, nullptr, 2, nullptr);
 
     xTaskCreate(led_task, "led_task", 1024, nullptr, 2, nullptr);
 
