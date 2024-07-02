@@ -898,10 +898,6 @@
 		)
 		(instances
 			(project "kfchess"
-				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd/e57c06f7-28e9-4a1e-938b-7aed8f707682"
-					(reference "U5")
-					(unit 1)
-				)
 				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd/1006d76f-e123-420c-b597-4203d77450cb"
 					(reference "U6")
 					(unit 1)
@@ -912,6 +908,10 @@
 				)
 				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd/adc74b68-73ce-4fdd-90f3-cc04068ca154"
 					(reference "U8")
+					(unit 1)
+				)
+				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd/e57c06f7-28e9-4a1e-938b-7aed8f707682"
+					(reference "U5")
 					(unit 1)
 				)
 			)

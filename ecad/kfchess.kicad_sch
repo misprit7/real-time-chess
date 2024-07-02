@@ -5,7 +5,7 @@
 	(uuid "d706098d-c574-48d0-bc99-bc3e7fab44dd")
 	(paper "A4")
 	(lib_symbols
-		(symbol "XY308-2_54-2P:XY308-2_54-2P"
+		(symbol "24_243_2:24_243_2"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -17,7 +17,7 @@
 					)
 				)
 			)
-			(property "Value" "XY308-2_54-2P"
+			(property "Value" "24_243_2"
 				(at 0 -2.54 0)
 				(effects
 					(font
@@ -25,7 +25,7 @@
 					)
 				)
 			)
-			(property "Footprint" "footprint:CONN-TH_XY308-2.54-2P"
+			(property "Footprint" "footprint:CONN-TH_24.243.2"
 				(at 0 -10.16 0)
 				(effects
 					(font
@@ -35,7 +35,7 @@
 					(hide yes)
 				)
 			)
-			(property "Datasheet" "https://item.szlcsc.com/581048.html"
+			(property "Datasheet" "https://www.farnell.com/datasheets/2963540.pdf"
 				(at -2.286 0.127 0)
 				(effects
 					(font
@@ -54,7 +54,7 @@
 					(hide yes)
 				)
 			)
-			(property "LCSC" "C557685"
+			(property "LCSC" "C7437322"
 				(at 0 0 0)
 				(effects
 					(font
@@ -63,7 +63,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_keywords" "C557685"
+			(property "ki_keywords" "C7437322"
 				(at 0 0 0)
 				(effects
 					(font
@@ -72,7 +72,135 @@
 					(hide yes)
 				)
 			)
-			(symbol "XY308-2_54-2P_0_1"
+			(symbol "24_243_2_0_1"
+				(rectangle
+					(start -2.54 3.81)
+					(end 2.54 -3.81)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(circle
+					(center -1.27 2.54)
+					(radius 0.381)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(pin unspecified line
+					(at -5.08 1.27 0)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at -5.08 -1.27 0)
+					(length 2.54)
+					(name "2"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+				)
+			)
+		)
+		(symbol "KF128-5_08-2P:KF128-5_08-2P"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at 0 1.27 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "KF128-5_08-2P"
+				(at 0 -2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "footprint:CONN-TH_P5.08_KF128-5.08-2P"
+				(at 0 -10.16 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+						(italic yes)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://item.szlcsc.com/481570.html"
+				(at -2.286 0.127 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "LCSC" "C474952"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "C474952"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "KF128-5_08-2P_0_1"
 				(rectangle
 					(start -2.54 3.81)
 					(end 2.54 -3.81)
@@ -1740,20 +1868,10 @@
 		)
 	)
 	(junction
-		(at 54.61 157.48)
+		(at 30.48 43.18)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "d9ecc3e7-5ed1-45fd-88f2-b2cf2ea00113")
-	)
-	(wire
-		(pts
-			(xy 31.75 45.72) (xy 44.45 45.72)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "1fba89c1-be78-4954-8822-5fb98fa2f848")
+		(uuid "b9f0dbb8-704d-4230-902b-70302ba971ed")
 	)
 	(wire
 		(pts
@@ -1767,33 +1885,23 @@
 	)
 	(wire
 		(pts
-			(xy 54.61 173.99) (xy 63.5 173.99)
+			(xy 30.48 43.18) (xy 44.45 43.18)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "3e907e59-c437-456e-bf84-ed5207643897")
+		(uuid "53263909-3c53-48a8-983b-7368cbbc2e19")
 	)
 	(wire
 		(pts
-			(xy 53.34 157.48) (xy 54.61 157.48)
+			(xy 53.34 154.94) (xy 63.5 154.94)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "3f53a4db-5811-4b36-800d-103b9a7e74bb")
-	)
-	(wire
-		(pts
-			(xy 54.61 171.45) (xy 63.5 171.45)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "492919d0-f442-468b-9955-902c0d4c842d")
+		(uuid "55210a88-61aa-402e-b87c-bbc603839151")
 	)
 	(wire
 		(pts
@@ -1807,6 +1915,16 @@
 	)
 	(wire
 		(pts
+			(xy 30.48 43.18) (xy 30.48 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "63bf6393-b4ae-4110-8c4e-a0e999a73255")
+	)
+	(wire
+		(pts
 			(xy 143.51 52.07) (xy 161.29 52.07)
 		)
 		(stroke
@@ -1817,33 +1935,13 @@
 	)
 	(wire
 		(pts
-			(xy 54.61 157.48) (xy 63.5 157.48)
+			(xy 53.34 157.48) (xy 63.5 157.48)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "ceeb848d-a895-40cd-9336-d1113c06b814")
-	)
-	(wire
-		(pts
-			(xy 44.45 43.18) (xy 31.75 43.18)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "cef4473c-d6d7-4e50-9cca-75b0c747016d")
-	)
-	(wire
-		(pts
-			(xy 63.5 154.94) (xy 54.61 154.94)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d2ba7851-5c8f-404c-b30e-c7517f088db3")
 	)
 	(wire
 		(pts
@@ -2582,85 +2680,6 @@
 		(uuid "fc8566b8-f592-4ebd-a938-f0c3bbe3d8d4")
 	)
 	(symbol
-		(lib_id "XY308-2_54-2P:XY308-2_54-2P")
-		(at 49.53 172.72 180)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "24a4a2d6-ff2d-466c-af4f-f926cd1fdac0")
-		(property "Reference" "U3"
-			(at 49.53 163.83 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "XY308-2_54-2P"
-			(at 49.53 166.37 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "footprint:CONN-TH_XY308-2.54-2P"
-			(at 49.53 162.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://item.szlcsc.com/581048.html"
-			(at 51.816 172.847 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 49.53 172.72 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C557685"
-			(at 49.53 172.72 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "001ec9fc-c4a9-4c5b-be1f-51e6b68adf2b")
-		)
-		(pin "1"
-			(uuid "b0d9755a-e2ae-43ff-9102-ce9dd003cab2")
-		)
-		(instances
-			(project "kfchess"
-				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
-					(reference "U3")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:+5V")
 		(at 100.33 35.56 270)
 		(unit 1)
@@ -2795,84 +2814,6 @@
 		)
 	)
 	(symbol
-		(lib_id "XY308-2_54-2P:XY308-2_54-2P")
-		(at 26.67 44.45 180)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "62afc183-afa1-411b-9191-a7c64cac0312")
-		(property "Reference" "U1"
-			(at 26.67 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "XY308-2_54-2P"
-			(at 26.67 38.1 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "footprint:CONN-TH_XY308-2.54-2P"
-			(at 26.67 34.29 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://item.szlcsc.com/581048.html"
-			(at 28.956 44.577 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 26.67 44.45 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C557685"
-			(at 26.67 44.45 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "d37d10ea-d78e-4ac6-a7c0-9fcc6e65ac10")
-		)
-		(pin "1"
-			(uuid "d8838b64-6271-44d7-9d34-ad8df98368fa")
-		)
-		(instances
-			(project "kfchess"
-				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
-					(reference "U1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:GND")
 		(at 63.5 157.48 0)
 		(unit 1)
@@ -2933,85 +2874,6 @@
 			(project "kfchess"
 				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
 					(reference "#PWR03")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "XY308-2_54-2P:XY308-2_54-2P")
-		(at 49.53 156.21 180)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "6d80ab78-a792-446d-a66d-97de3d531bc5")
-		(property "Reference" "U2"
-			(at 49.53 147.32 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "XY308-2_54-2P"
-			(at 49.53 149.86 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "footprint:CONN-TH_XY308-2.54-2P"
-			(at 49.53 146.05 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://item.szlcsc.com/581048.html"
-			(at 51.816 156.337 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 49.53 156.21 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C557685"
-			(at 49.53 156.21 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "0616cd5c-bd9d-4be5-bf61-23c561fe7df4")
-		)
-		(pin "1"
-			(uuid "fcc94f49-a125-470b-a4d9-3a57905204c4")
-		)
-		(instances
-			(project "kfchess"
-				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
-					(reference "U2")
 					(unit 1)
 				)
 			)
@@ -3085,6 +2947,85 @@
 		)
 	)
 	(symbol
+		(lib_id "KF128-5_08-2P:KF128-5_08-2P")
+		(at 48.26 156.21 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "97613b69-f2c1-44a3-9a66-0733873c2ef2")
+		(property "Reference" "U1"
+			(at 48.26 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "KF128-5_08-2P"
+			(at 48.26 149.86 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "footprint:CONN-TH_P5.08_KF128-5.08-2P"
+			(at 48.26 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://item.szlcsc.com/481570.html"
+			(at 50.546 156.337 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 48.26 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C474952"
+			(at 48.26 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "2f417d44-1b2d-48c3-9867-5ccc7e51edf2")
+		)
+		(pin "1"
+			(uuid "6c8424f4-2379-4353-9e8a-f36be4d335c5")
+		)
+		(instances
+			(project ""
+				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
+					(reference "U1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "teensy:Teensy4.1")
 		(at 72.39 90.17 0)
 		(unit 1)
@@ -3110,7 +3051,7 @@
 				)
 			)
 		)
-		(property "Footprint" "teensy:Teensy41_SMT"
+		(property "Footprint" "teensy:Teensy41"
 			(at 62.23 80.01 0)
 			(effects
 				(font
@@ -3349,72 +3290,6 @@
 	)
 	(symbol
 		(lib_id "power:+5V")
-		(at 63.5 171.45 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "c18fb827-74e4-4175-9555-19d78b59fd2f")
-		(property "Reference" "#PWR04"
-			(at 63.5 175.26 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+5V_em"
-			(at 63.5 166.37 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 63.5 171.45 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 63.5 171.45 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+5V\""
-			(at 63.5 171.45 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "c7156e0c-b8e1-47a1-aeac-be3d8254057e")
-		)
-		(instances
-			(project "kfchess"
-				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
-					(reference "#PWR04")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+5V")
 		(at 63.5 154.94 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -3480,17 +3355,53 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 63.5 173.99 0)
+		(lib_id "24_243_2:24_243_2")
+		(at 25.4 44.45 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "f1164bb0-6032-46a4-91cb-d112a9aad460")
-		(property "Reference" "#PWR05"
-			(at 63.5 180.34 0)
+		(uuid "f297dd55-3415-416f-9931-d7b961fd35d7")
+		(property "Reference" "U9"
+			(at 25.4 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "24_243_2"
+			(at 25.4 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "footprint:CONN-TH_24.243.2"
+			(at 25.4 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.farnell.com/datasheets/2963540.pdf"
+			(at 27.686 44.577 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 25.4 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3498,16 +3409,8 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "GND"
-			(at 63.5 179.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 63.5 173.99 0)
+		(property "LCSC" "C7437322"
+			(at 25.4 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3515,31 +3418,16 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
-			(at 63.5 173.99 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 63.5 173.99 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
+		(pin "2"
+			(uuid "205d239d-0b1d-4646-bdc5-995060daad6b")
 		)
 		(pin "1"
-			(uuid "4276dd26-88d9-4611-a5b0-074e15cbe1f9")
+			(uuid "a3801493-aba1-4970-9db3-93eb93b51a42")
 		)
 		(instances
-			(project "kfchess"
+			(project ""
 				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
-					(reference "#PWR05")
+					(reference "U9")
 					(unit 1)
 				)
 			)
