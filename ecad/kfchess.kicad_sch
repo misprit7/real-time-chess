@@ -133,6 +133,351 @@
 				)
 			)
 		)
+		(symbol "DB129VG-5_08-4P-GN-S:DB129VG-5_08-4P-GN-S"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at 0 1.27 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "DB129VG-5_08-4P-GN-S"
+				(at 0 -2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "footprint:CONN-TH_4P-P5.08_DB129VG-5.08-4P-GN-S"
+				(at 0 -10.16 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+						(italic yes)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://atta.szlcsc.com/upload/public/pdf/source/20221104/14E80596629FA66A7247B0FAA60359B7.pdf"
+				(at -2.286 0.127 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "LCSC" "C2981774"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "C2981774"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "DB129VG-5_08-4P-GN-S_0_1"
+				(rectangle
+					(start -2.54 6.35)
+					(end 2.54 -6.35)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(circle
+					(center -1.27 5.08)
+					(radius 0.381)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(pin unspecified line
+					(at -5.08 3.81 0)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at -5.08 1.27 0)
+					(length 2.54)
+					(name "2"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at -5.08 -1.27 0)
+					(length 2.54)
+					(name "3"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at -5.08 -3.81 0)
+					(length 2.54)
+					(name "4"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+				)
+			)
+		)
+		(symbol "Jumper:SolderJumper_2_Open"
+			(pin_numbers hide)
+			(pin_names
+				(offset 0) hide)
+			(exclude_from_sim yes)
+			(in_bom no)
+			(on_board yes)
+			(property "Reference" "JP"
+				(at 0 2.032 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "SolderJumper_2_Open"
+				(at 0 -2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Solder Jumper, 2-pole, open"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "solder jumper SPST"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "SolderJumper*Open*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "SolderJumper_2_Open_0_1"
+				(arc
+					(start -0.254 1.016)
+					(mid -1.2656 0)
+					(end -0.254 -1.016)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start -0.254 1.016)
+					(mid -1.2656 0)
+					(end -0.254 -1.016)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.254 1.016) (xy -0.254 -1.016)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.254 1.016) (xy 0.254 -1.016)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start 0.254 -1.016)
+					(mid 1.2656 0)
+					(end 0.254 1.016)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start 0.254 -1.016)
+					(mid 1.2656 0)
+					(end 0.254 1.016)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+			)
+			(symbol "SolderJumper_2_Open_1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 2.54)
+					(name "B"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
 		(symbol "KF128-5_08-2P:KF128-5_08-2P"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -1905,6 +2250,16 @@
 	)
 	(wire
 		(pts
+			(xy 111.76 71.12) (xy 100.33 71.12)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5856c609-6f46-4e62-a4da-484d36cd412c")
+	)
+	(wire
+		(pts
 			(xy 120.65 52.07) (xy 124.46 52.07)
 		)
 		(stroke
@@ -1945,6 +2300,16 @@
 	)
 	(wire
 		(pts
+			(xy 147.32 151.13) (xy 165.1 151.13)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f8933fa2-7ec9-4355-bd90-454383ef5419")
+	)
+	(wire
+		(pts
 			(xy 180.34 52.07) (xy 199.39 52.07)
 		)
 		(stroke
@@ -1952,6 +2317,28 @@
 			(type default)
 		)
 		(uuid "fa7832b8-0c63-4b17-9283-822bb69467ec")
+	)
+	(label "jp2"
+		(at 161.29 91.44 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "006bc28c-c9a1-4d58-a791-f49a16dd71a2")
+	)
+	(label "rx_out"
+		(at 147.32 156.21 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "05379b31-58f0-42fc-a51d-53f2ef50607a")
 	)
 	(label "s24"
 		(at 100.33 48.26 0)
@@ -1985,6 +2372,17 @@
 			(justify right bottom)
 		)
 		(uuid "0f167677-e916-4fcb-a55c-149f2a2d7c6c")
+	)
+	(label "tx_in"
+		(at 96.52 153.67 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "164f4924-ad43-4de7-86f2-d87de87a39d0")
 	)
 	(label "c12"
 		(at 44.45 50.8 180)
@@ -2118,6 +2516,17 @@
 		)
 		(uuid "37221d31-87f2-4125-be25-b6302c292dc0")
 	)
+	(label "jp2"
+		(at 44.45 45.72 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "3984cf30-ff3c-408f-a70c-094f81fe21fd")
+	)
 	(label "c31"
 		(at 44.45 68.58 180)
 		(fields_autoplaced yes)
@@ -2184,6 +2593,17 @@
 		)
 		(uuid "5207614c-760a-410c-9810-8f455e16074d")
 	)
+	(label "rx_in"
+		(at 44.45 83.82 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "52c01637-c66e-4421-bca7-d096b45b36b3")
+	)
 	(label "leds"
 		(at 120.65 52.07 180)
 		(fields_autoplaced yes)
@@ -2216,6 +2636,17 @@
 			(justify right bottom)
 		)
 		(uuid "608581b6-e758-4ee1-b59d-4e3290eca232")
+	)
+	(label "rx_out"
+		(at 100.33 91.44 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "617be667-afef-4658-9f79-f0404e2d398f")
 	)
 	(label "c13"
 		(at 44.45 53.34 180)
@@ -2293,17 +2724,6 @@
 			(justify left bottom)
 		)
 		(uuid "72222991-c0d8-4ab5-a16f-729f67cc1e21")
-	)
-	(label "c44"
-		(at 100.33 91.44 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "7860d78a-400f-4a26-9cea-268bc5d8fcf3")
 	)
 	(label "c12"
 		(at 124.46 60.96 180)
@@ -2426,6 +2846,17 @@
 		)
 		(uuid "8ebc64ba-a5b3-4766-8ea8-1ec20d8f1edd")
 	)
+	(label "jp1"
+		(at 132.08 91.44 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "94160559-fa15-413f-a907-5b538cc9f4bb")
+	)
 	(label "c13"
 		(at 124.46 63.5 180)
 		(fields_autoplaced yes)
@@ -2436,6 +2867,17 @@
 			(justify right bottom)
 		)
 		(uuid "96272160-48ae-4dc4-b48f-15508fd049db")
+	)
+	(label "tx_out"
+		(at 147.32 158.75 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "9e9847db-11f9-4d89-a8d8-ce258e5648a9")
 	)
 	(label "s44"
 		(at 100.33 78.74 0)
@@ -2514,16 +2956,27 @@
 		)
 		(uuid "b0c7f69a-9fd7-4302-ac98-174cb3fe6c54")
 	)
-	(label "c32"
-		(at 44.45 83.82 180)
+	(label "tx_out"
+		(at 100.33 88.9 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right bottom)
+			(justify left bottom)
 		)
-		(uuid "b2331c25-865b-442f-9136-1da2950caae1")
+		(uuid "b8bccbb8-4d85-4e5a-9208-0dd2339be81d")
+	)
+	(label "c32"
+		(at 100.33 76.2 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "baad00ba-0611-430d-8f22-138441bef8ec")
 	)
 	(label "c21"
 		(at 161.29 58.42 180)
@@ -2546,17 +2999,6 @@
 			(justify left bottom)
 		)
 		(uuid "c8e9dedb-4801-4476-89e9-dc4fed894842")
-	)
-	(label "c33"
-		(at 44.45 86.36 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "cc0d1e0d-599d-4df7-b12e-750e399b62b3")
 	)
 	(label "s31"
 		(at 218.44 58.42 0)
@@ -2646,6 +3088,28 @@
 		)
 		(uuid "f0b9ed10-bff5-4764-8008-948f5c3f0ee9")
 	)
+	(label "tx_in"
+		(at 44.45 86.36 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "f4f333cd-56be-4053-8bd8-2fd6fd0fec8f")
+	)
+	(label "c44"
+		(at 100.33 86.36 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "f65aec6d-47e5-4183-a50e-5ef82052b775")
+	)
 	(label "s14"
 		(at 143.51 66.04 0)
 		(fields_autoplaced yes)
@@ -2656,6 +3120,17 @@
 			(justify left bottom)
 		)
 		(uuid "f6acd277-4698-4543-baa4-a24d71ea6d44")
+	)
+	(label "c33"
+		(at 100.33 73.66 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "f6c3a87b-8c3c-4a01-9a6a-e7f4bd24367c")
 	)
 	(label "c23"
 		(at 161.29 63.5 180)
@@ -2668,6 +3143,28 @@
 		)
 		(uuid "f6d88f5e-aa85-4131-883a-2c648e871d8d")
 	)
+	(label "jp1"
+		(at 100.33 83.82 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "facb614a-dba2-4633-8c73-7d2eb8885a59")
+	)
+	(label "rx_in"
+		(at 96.52 151.13 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "fc54ffa4-7c44-4642-bf53-41c09d72c968")
+	)
 	(label "c24"
 		(at 44.45 66.04 180)
 		(fields_autoplaced yes)
@@ -2678,6 +3175,209 @@
 			(justify right bottom)
 		)
 		(uuid "fc8566b8-f592-4ebd-a938-f0c3bbe3d8d4")
+	)
+	(symbol
+		(lib_id "Jumper:SolderJumper_2_Open")
+		(at 132.08 95.25 90)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "0c673a89-f41c-4ed3-920f-3e0cdfb57237")
+		(property "Reference" "JP1"
+			(at 134.62 93.9799 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "SolderJumper_2_Open"
+			(at 134.62 96.5199 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm"
+			(at 132.08 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 132.08 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Solder Jumper, 2-pole, open"
+			(at 132.08 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a4ba028f-6ecc-4bc5-b42c-bc6ea10b878f")
+		)
+		(pin "2"
+			(uuid "6ce40a43-3373-41c1-9ae8-f07bd6e1e692")
+		)
+		(instances
+			(project ""
+				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
+					(reference "JP1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 96.52 158.75 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "31f68793-b96a-4e82-9958-a1eda1d384fe")
+		(property "Reference" "#PWR04"
+			(at 96.52 165.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 96.52 163.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 96.52 158.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 96.52 158.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 96.52 158.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "4545562d-744c-456e-b39e-30b26ca239f8")
+		)
+		(instances
+			(project ""
+				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
+					(reference "#PWR04")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+5V")
+		(at 147.32 153.67 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "38772856-9a9b-4632-b978-67c299e6b4fb")
+		(property "Reference" "#PWR0314"
+			(at 143.51 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+5V"
+			(at 151.13 153.6699 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 147.32 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 147.32 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(at 147.32 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5f360b8a-9abe-4e45-83f8-0733b250f15a")
+		)
+		(instances
+			(project "kfchess"
+				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
+					(reference "#PWR0314")
+					(unit 1)
+				)
+			)
+		)
 	)
 	(symbol
 		(lib_id "power:+5V")
@@ -2881,16 +3581,16 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 100.33 71.12 90)
+		(at 161.29 99.06 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "910b0fb7-fabf-4569-aad5-e1485d6bf436")
-		(property "Reference" "#PWR08"
-			(at 106.68 71.12 0)
+		(uuid "6cd8f533-0cf1-44bb-9302-11da76603452")
+		(property "Reference" "#PWR0316"
+			(at 161.29 105.41 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2899,16 +3599,15 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 104.14 71.1199 90)
+			(at 161.29 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
 			)
 		)
 		(property "Footprint" ""
-			(at 100.33 71.12 0)
+			(at 161.29 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2917,7 +3616,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 100.33 71.12 0)
+			(at 161.29 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2926,7 +3625,74 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 100.33 71.12 0)
+			(at 161.29 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5c1806e7-d8fd-42c2-9206-3969378dc8b7")
+		)
+		(instances
+			(project "kfchess"
+				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
+					(reference "#PWR0316")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 111.76 71.12 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "910b0fb7-fabf-4569-aad5-e1485d6bf436")
+		(property "Reference" "#PWR08"
+			(at 111.76 77.47 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 114.3 72.3899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 111.76 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 111.76 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 111.76 71.12 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2941,6 +3707,157 @@
 			(project "kfchess"
 				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
 					(reference "#PWR08")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 132.08 99.06 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "9193f642-1d1b-4e40-89a7-0e799aeecf9f")
+		(property "Reference" "#PWR0315"
+			(at 132.08 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 132.08 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 132.08 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 132.08 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 132.08 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "65fbac62-2c03-4a77-afe0-4245fc9a2cfc")
+		)
+		(instances
+			(project "kfchess"
+				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
+					(reference "#PWR0315")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "DB129VG-5_08-4P-GN-S:DB129VG-5_08-4P-GN-S")
+		(at 142.24 154.94 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "93acfa96-096d-452b-aa59-320b25dc1d1c")
+		(property "Reference" "U3"
+			(at 142.24 143.51 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "DB129VG-5_08-4P-GN-S"
+			(at 142.24 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "footprint:CONN-TH_4P-P5.08_DB129VG-5.08-4P-GN-S"
+			(at 142.24 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://atta.szlcsc.com/upload/public/pdf/source/20221104/14E80596629FA66A7247B0FAA60359B7.pdf"
+			(at 144.526 155.067 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 142.24 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C2981774"
+			(at 142.24 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "6cb5e95d-c1a2-4cff-817f-8c5e1056e677")
+		)
+		(pin "2"
+			(uuid "0dc8f52a-c88a-430a-933f-f5338257b61f")
+		)
+		(pin "3"
+			(uuid "51722d59-a209-457b-90ff-78a07927c939")
+		)
+		(pin "4"
+			(uuid "af9c69df-8d79-4c4d-b841-4cb7ea9ddc05")
+		)
+		(instances
+			(project "kfchess"
+				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
+					(reference "U3")
 					(unit 1)
 				)
 			)
@@ -3020,6 +3937,161 @@
 			(project ""
 				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
 					(reference "U1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Jumper:SolderJumper_2_Open")
+		(at 161.29 95.25 90)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "9b857916-ac7a-49e5-8fa9-5d221c8ecd1f")
+		(property "Reference" "JP2"
+			(at 163.83 93.9799 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "SolderJumper_2_Open"
+			(at 163.83 96.5199 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm"
+			(at 161.29 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 161.29 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Solder Jumper, 2-pole, open"
+			(at 161.29 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2f928971-f0ac-41c5-bcdb-6257a05857f9")
+		)
+		(pin "2"
+			(uuid "05e7615f-ae17-4267-a783-09b37abe5788")
+		)
+		(instances
+			(project "kfchess"
+				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
+					(reference "JP2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "DB129VG-5_08-4P-GN-S:DB129VG-5_08-4P-GN-S")
+		(at 91.44 154.94 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "9bd0e5bd-83d1-482c-a0f2-a87665019303")
+		(property "Reference" "U2"
+			(at 91.44 143.51 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "DB129VG-5_08-4P-GN-S"
+			(at 91.44 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "footprint:CONN-TH_4P-P5.08_DB129VG-5.08-4P-GN-S"
+			(at 91.44 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://atta.szlcsc.com/upload/public/pdf/source/20221104/14E80596629FA66A7247B0FAA60359B7.pdf"
+			(at 93.726 155.067 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 91.44 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C2981774"
+			(at 91.44 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "6dda21d1-7127-44c2-a005-d5d968f5782c")
+		)
+		(pin "2"
+			(uuid "9051b953-c3d7-4fac-81c6-bde9d6c0bf6a")
+		)
+		(pin "3"
+			(uuid "7a5292f5-ffe1-485a-9c6f-1df7d1c50a0c")
+		)
+		(pin "4"
+			(uuid "dd00f998-8f2f-4809-b8d7-a6b4ae9d6477")
+		)
+		(instances
+			(project ""
+				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
+					(reference "U2")
 					(unit 1)
 				)
 			)
@@ -3283,6 +4355,139 @@
 			(project "kfchess"
 				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
 					(reference "U4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 165.1 151.13 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ca27f315-d251-482f-8f92-c7945bc79211")
+		(property "Reference" "#PWR05"
+			(at 165.1 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 165.1 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 165.1 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 165.1 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 165.1 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "947790cb-2735-4b78-a97a-6dcecabd8677")
+		)
+		(instances
+			(project "kfchess"
+				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
+					(reference "#PWR05")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+5V")
+		(at 96.52 156.21 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d337ba81-0dde-43ea-8c16-5ae56058c6a2")
+		(property "Reference" "#PWR0313"
+			(at 92.71 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+5V"
+			(at 100.33 156.2099 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 96.52 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 96.52 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(at 96.52 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "35496c35-fac7-42ab-83df-455678e82364")
+		)
+		(instances
+			(project "kfchess"
+				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
+					(reference "#PWR0313")
 					(unit 1)
 				)
 			)
