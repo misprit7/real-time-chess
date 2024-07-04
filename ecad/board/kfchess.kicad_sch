@@ -133,7 +133,7 @@
 				)
 			)
 		)
-		(symbol "DB129VG-5_08-4P-GN-S:DB129VG-5_08-4P-GN-S"
+		(symbol "DB128V-5_08-4P-GN-S:DB128V-5_08-4P-GN-S"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -145,7 +145,7 @@
 					)
 				)
 			)
-			(property "Value" "DB129VG-5_08-4P-GN-S"
+			(property "Value" "DB128V-5_08-4P-GN-S"
 				(at 0 -2.54 0)
 				(effects
 					(font
@@ -153,7 +153,7 @@
 					)
 				)
 			)
-			(property "Footprint" "footprint:CONN-TH_4P-P5.08_DB129VG-5.08-4P-GN-S"
+			(property "Footprint" "footprint:CONN-TH_4P-P5.08_DIBO_DB128V-5.08"
 				(at 0 -10.16 0)
 				(effects
 					(font
@@ -163,7 +163,7 @@
 					(hide yes)
 				)
 			)
-			(property "Datasheet" "https://atta.szlcsc.com/upload/public/pdf/source/20221104/14E80596629FA66A7247B0FAA60359B7.pdf"
+			(property "Datasheet" "https://atta.szlcsc.com/upload/public/pdf/source/20211116/A787F5746A5FC39810745D8FDCF241F0.pdf"
 				(at -2.286 0.127 0)
 				(effects
 					(font
@@ -182,7 +182,7 @@
 					(hide yes)
 				)
 			)
-			(property "LCSC" "C2981774"
+			(property "LCSC" "C2915641"
 				(at 0 0 0)
 				(effects
 					(font
@@ -191,7 +191,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_keywords" "C2981774"
+			(property "ki_keywords" "C2915641"
 				(at 0 0 0)
 				(effects
 					(font
@@ -200,7 +200,7 @@
 					(hide yes)
 				)
 			)
-			(symbol "DB129VG-5_08-4P-GN-S_0_1"
+			(symbol "DB128V-5_08-4P-GN-S_0_1"
 				(rectangle
 					(start -2.54 6.35)
 					(end 2.54 -6.35)
@@ -3779,91 +3779,6 @@
 		)
 	)
 	(symbol
-		(lib_id "DB129VG-5_08-4P-GN-S:DB129VG-5_08-4P-GN-S")
-		(at 142.24 154.94 180)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "93acfa96-096d-452b-aa59-320b25dc1d1c")
-		(property "Reference" "U3"
-			(at 142.24 143.51 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "DB129VG-5_08-4P-GN-S"
-			(at 142.24 146.05 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "footprint:CONN-TH_4P-P5.08_DB129VG-5.08-4P-GN-S"
-			(at 142.24 144.78 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://atta.szlcsc.com/upload/public/pdf/source/20221104/14E80596629FA66A7247B0FAA60359B7.pdf"
-			(at 144.526 155.067 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 142.24 154.94 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C2981774"
-			(at 142.24 154.94 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "6cb5e95d-c1a2-4cff-817f-8c5e1056e677")
-		)
-		(pin "2"
-			(uuid "0dc8f52a-c88a-430a-933f-f5338257b61f")
-		)
-		(pin "3"
-			(uuid "51722d59-a209-457b-90ff-78a07927c939")
-		)
-		(pin "4"
-			(uuid "af9c69df-8d79-4c4d-b841-4cb7ea9ddc05")
-		)
-		(instances
-			(project "kfchess"
-				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
-					(reference "U3")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "KF128-5_08-2P:KF128-5_08-2P")
 		(at 48.26 156.21 180)
 		(unit 1)
@@ -4013,7 +3928,7 @@
 		)
 	)
 	(symbol
-		(lib_id "DB129VG-5_08-4P-GN-S:DB129VG-5_08-4P-GN-S")
+		(lib_id "DB128V-5_08-4P-GN-S:DB128V-5_08-4P-GN-S")
 		(at 91.44 154.94 180)
 		(unit 1)
 		(exclude_from_sim no)
@@ -4021,8 +3936,8 @@
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "9bd0e5bd-83d1-482c-a0f2-a87665019303")
-		(property "Reference" "U2"
+		(uuid "bb475303-5a7f-41ad-b882-c36a54eeaf00")
+		(property "Reference" "U10"
 			(at 91.44 143.51 0)
 			(effects
 				(font
@@ -4030,7 +3945,7 @@
 				)
 			)
 		)
-		(property "Value" "DB129VG-5_08-4P-GN-S"
+		(property "Value" "DB128V-5_08-4P-GN-S"
 			(at 91.44 146.05 0)
 			(effects
 				(font
@@ -4038,7 +3953,7 @@
 				)
 			)
 		)
-		(property "Footprint" "footprint:CONN-TH_4P-P5.08_DB129VG-5.08-4P-GN-S"
+		(property "Footprint" "footprint:CONN-TH_4P-P5.08_DIBO_DB128V-5.08"
 			(at 91.44 144.78 0)
 			(effects
 				(font
@@ -4048,7 +3963,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://atta.szlcsc.com/upload/public/pdf/source/20221104/14E80596629FA66A7247B0FAA60359B7.pdf"
+		(property "Datasheet" "https://atta.szlcsc.com/upload/public/pdf/source/20211116/A787F5746A5FC39810745D8FDCF241F0.pdf"
 			(at 93.726 155.067 0)
 			(effects
 				(font
@@ -4067,7 +3982,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C2981774"
+		(property "LCSC" "C2915641"
 			(at 91.44 154.94 0)
 			(effects
 				(font
@@ -4076,22 +3991,22 @@
 				(hide yes)
 			)
 		)
-		(pin "1"
-			(uuid "6dda21d1-7127-44c2-a005-d5d968f5782c")
-		)
 		(pin "2"
-			(uuid "9051b953-c3d7-4fac-81c6-bde9d6c0bf6a")
+			(uuid "49e04e5a-f422-4d9f-bfeb-dbb0aeb20fbf")
 		)
 		(pin "3"
-			(uuid "7a5292f5-ffe1-485a-9c6f-1df7d1c50a0c")
+			(uuid "41632d00-5500-4e16-96fd-a25d447d101d")
+		)
+		(pin "1"
+			(uuid "364587c6-50df-4f0d-854a-c0cf1ab31a07")
 		)
 		(pin "4"
-			(uuid "dd00f998-8f2f-4809-b8d7-a6b4ae9d6477")
+			(uuid "44cc44af-9039-4189-a5e0-3ee035db73ce")
 		)
 		(instances
 			(project ""
 				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
-					(reference "U2")
+					(reference "U10")
 					(unit 1)
 				)
 			)
@@ -4488,6 +4403,91 @@
 			(project "kfchess"
 				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
 					(reference "#PWR0313")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "DB128V-5_08-4P-GN-S:DB128V-5_08-4P-GN-S")
+		(at 142.24 154.94 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d7fbb343-0f01-4b20-b259-5f7b1bde8699")
+		(property "Reference" "U2"
+			(at 142.24 143.51 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "DB128V-5_08-4P-GN-S"
+			(at 142.24 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "footprint:CONN-TH_4P-P5.08_DIBO_DB128V-5.08"
+			(at 142.24 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://atta.szlcsc.com/upload/public/pdf/source/20211116/A787F5746A5FC39810745D8FDCF241F0.pdf"
+			(at 144.526 155.067 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 142.24 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C2915641"
+			(at 142.24 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "e08f2c2c-86a0-4433-a621-2cf1f0e2b1eb")
+		)
+		(pin "3"
+			(uuid "c4f791a3-8f4c-4047-a080-e364e3bde021")
+		)
+		(pin "1"
+			(uuid "49acbbc9-f797-4ed7-9ea2-e590c5c71ace")
+		)
+		(pin "4"
+			(uuid "f33b8cd4-f300-4d47-997a-e7fb1869d46d")
+		)
+		(instances
+			(project "kfchess"
+				(path "/d706098d-c574-48d0-bc99-bc3e7fab44dd"
+					(reference "U2")
 					(unit 1)
 				)
 			)
