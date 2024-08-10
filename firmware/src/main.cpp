@@ -72,19 +72,19 @@ const int n_sqr = 16;
 int em_pins[n_sqr] = {
     4, 5, 6, 7,
     8, 9, 10, 11,
-    12, 28, 29, 30,
-    31, 32, 33, 34,
+    12, 32, 33, 30,
+    31, 32, 33, 36,
 };
 
 int sens_pins[n_sqr] = {
     14, 15, 16, 17,
     18, 19, 20, 21,
     22, 23, 24, 25,
-    26, 27, 38, 39
+    26, 27, 38, 39,
 };
 SemaphoreHandle_t adc_mut;
 
-int freq_pins[2] = { 2, 3 };
+int freq_pins[2] = { 2 };
 
 const int led_pin = 1;
 
@@ -279,8 +279,7 @@ void setup() {
     xTaskCreate(led_task, "led_task", 1024, nullptr, 2, nullptr);
 
     static int freq_idx[2] = {0, 1};
-    xTaskCreate(freq_output_task, "freq_output_task_1", 1024, &freq_idx[0], 2, nullptr);
-    xTaskCreate(freq_output_task, "freq_output_task_2", 1024, &freq_idx[1], 2, nullptr);
+    xTaskCreate(freq_output_task, "freq_output_task", 1024, &freq_idx[0], 2, nullptr);
 
     static int square_idx[n_sqr];
     for(int i = 0; i < 16; ++i){
