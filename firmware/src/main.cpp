@@ -72,7 +72,7 @@ const int n_sqr = 16;
 int em_pins[n_sqr] = {
     4, 5, 6, 7,
     8, 9, 10, 11,
-    12, 32, 33, 30,
+    12, 40, 41, 30,
     31, 32, 33, 36,
 };
 
@@ -84,9 +84,11 @@ int sens_pins[n_sqr] = {
 };
 SemaphoreHandle_t adc_mut;
 
-int freq_pins[2] = { 2 };
+int freq_pin = 2;
 
 const int led_pin = 1;
+
+int jmp_pins[2] = { 37, 3 };
 
 /******************************************************************************
  * ws2812Serial
@@ -114,6 +116,12 @@ double freq_output[2] = { 500, 600 };
 unsigned int sampling_period_us;
 
 /******************************************************************************
+ * Global variables
+ ******************************************************************************/
+
+static unsigned int board_id;
+
+/******************************************************************************
  * Helper functions
  ******************************************************************************/
 
@@ -131,13 +139,18 @@ void color_wipe(int color, int wait_ms) {
 
 static void blink_task(void*) {
     pinMode(arduino::LED_BUILTIN, arduino::OUTPUT);
+    pinMode(jmp_pins[0], arduino::INPUT_PULLUP);
+    pinMode(jmp_pins[1], arduino::INPUT_PULLUP);
     while (true) {
         digitalWriteFast(arduino::LED_BUILTIN, arduino::LOW);
         vTaskDelay(pdMS_TO_TICKS(500));
 
         digitalWriteFast(arduino::LED_BUILTIN, arduino::HIGH);
         vTaskDelay(pdMS_TO_TICKS(500));
-        /*Serial.println("Blink");*/
+        Serial.print("JMP 1: ");
+        Serial.println(digitalRead(jmp_pins[0]));
+        Serial.print("JMP 2: ");
+        Serial.println(digitalRead(jmp_pins[1]));
     }
 }
 
@@ -156,12 +169,12 @@ static void led_task(void*) {
 
 static void square_task(void *params) {
     int idx = *((int*) params);
-        /*int delay_ms = 1500 / leds.numPixels();*/
-        /**/
-        /*for (int i=0; i < 8; i++) {*/
-        /*    leds.setPixel(8*idx + i, idx % 2 == 0 ? RED : GREEN);*/
-        /*}*/
-        /*vTaskDelay(pdMS_TO_TICKS(1000));*/
+    /*int delay_ms = 1500 / leds.numPixels();*/
+    /**/
+    /*for (int i=0; i < 8; i++) {*/
+    /*    leds.setPixel(8*idx + i, idx % 2 == 0 ? RED : GREEN);*/
+    /*}*/
+    /*vTaskDelay(pdMS_TO_TICKS(1000));*/
     sampling_period_us = round(1000000*(1.0/freq_sample));
 
     pinMode(em_pins[idx], arduino::OUTPUT);
@@ -173,6 +186,11 @@ static void square_task(void *params) {
 
     int last_touch[2] = {neg_tick, neg_tick};
     bool cur_touch[2] = {false, false};
+
+    /*for (int i=0; i < 8; i++) {*/
+    /*    leds.setPixel(8*idx + i, WHITE);*/
+    /*}*/
+    /*for ever {}*/
 
 
     Goertzel goertzels[2] = { Goertzel(freq_output[0], freq_sample, 100), Goertzel(freq_output[1], freq_sample, 100) };
@@ -243,11 +261,11 @@ static void freq_output_task(void *params) {
     TickType_t last_wake = xTaskGetTickCount();
     uint8_t output_state = 0;
 
-    pinMode(freq_pins[idx], arduino::OUTPUT);
+    pinMode(freq_pin, arduino::OUTPUT);
 
     for ever {
         output_state = !output_state;
-        digitalWrite(freq_pins[idx], output_state);
+        digitalWrite(freq_pin, output_state);
         vTaskDelayUntil(&last_wake, pdUS_TO_TICKS(1e6/freq_output[idx]/2));
     }
 }
@@ -260,6 +278,11 @@ FLASHMEM __attribute__((noinline))
 void setup() {
     Serial.begin(115200);
     delay(200);
+
+    pinMode(jmp_pins[0], arduino::INPUT_PULLUP);
+    pinMode(jmp_pins[1], arduino::INPUT_PULLUP);
+
+    board_id = digitalRead(!jmp_pins[0] + 2 * (!jmp_pins[1]));
 
 
     if (CrashReport) {
@@ -278,8 +301,9 @@ void setup() {
 
     xTaskCreate(led_task, "led_task", 1024, nullptr, 2, nullptr);
 
-    static int freq_idx[2] = {0, 1};
-    xTaskCreate(freq_output_task, "freq_output_task", 1024, &freq_idx[0], 2, nullptr);
+    /*static int freq_idx = board_id == 1 || board_id == 2 ? 0 : 1;*/
+    static int freq_idx = 0;
+    xTaskCreate(freq_output_task, "freq_output_task", 1024, &freq_idx, 2, nullptr);
 
     static int square_idx[n_sqr];
     for(int i = 0; i < 16; ++i){
