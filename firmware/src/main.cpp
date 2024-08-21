@@ -39,13 +39,13 @@
  * Config
  ******************************************************************************/
 
-#define INTENSE_RED    0xFF0000
-#define INTENSE_GREEN  0x00FF00
-#define INTENSE_BLUE   0x0000FF
-#define INTENSE_YELLOW 0xFFFF00
-#define INTENSE_PINK   0xFF1088
+#define INTENSE_RED    0x990000
+#define INTENSE_GREEN  0x009900
+#define INTENSE_BLUE   0x000099
+#define INTENSE_YELLOW 0x999900
+#define INTENSE_PINK   0x991088
 #define INTENSE_ORANGE 0xE05800
-#define INTENSE_WHITE  0xFFFFFF
+#define INTENSE_WHITE  0x999999
 
 // Less intense...
 #define RED    0x160000
@@ -65,7 +65,7 @@ int plr_clrs_unlock[2] = {RED, BLUE};
 // Threshold for ewma of goertzel filter before considered touching
 // Not sure if goertzel filter isn't scale invariant to e.g. window size,
 // freq, etc. If not should probably be scaled appropriately but I'm too lazy
-const float goertzel_thresh = 15;
+const float goertzel_thresh = 10;
 // How long of a period to compute goertzel filter for
 const float goertzel_win_ms = 100;
 
@@ -161,7 +161,7 @@ uint32_t hsv_to_rgb(float h, float s, float v, float fade) {
         case 4: r = t, g = p, b = v; break;
         case 5: r = v, g = p, b = q; break;
     }
-    float reduction = 0.1 * fade;
+    float reduction = 0.15 * fade;
     r *= reduction;
     g *= reduction;
     b *= reduction;
@@ -220,7 +220,7 @@ void color_spiral(int idx, int step, int max_step){
 
     for(int i = 0; i < 8; ++i){
         leds.setPixel(8*idx + i, get_rainbow_color(
-                    (atan((step-max_step/2.0)*2/max_step * 3)-atan(-3))*max_step/1.5 + 40*theta,
+                    (atan((step-max_step/2.0)*2/max_step * 3)-atan(-3))*max_step/1.5 + 40*theta + 1000,
                     min(1.0, 4*(max_step-step)*1.0/max_step)
                 ));
     }
@@ -255,14 +255,14 @@ static void blink_task(void*) {
 
 static void led_task(void*) {
     for ever {
-        if(xSemaphoreTake(leds_mut, pdMS_TO_TICKS(100))){
+        if(xSemaphoreTake(leds_mut, pdMS_TO_TICKS(20))){
             /*leds.setPixel(0, WHITE);*/
             leds.show();
             xSemaphoreGive(leds_mut);
         } else {
             Serial.println("LED mutex failed!");
         }
-        vTaskDelay(pdMS_TO_TICKS(100));
+        vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
 
@@ -301,7 +301,9 @@ static void square_task(void *params) {
     while(xTaskGetTickCount() - t_init < pdMS_TO_TICKS(intro_ms)){
         color_spiral(idx, step, intro_ms/intro_delay_ms);
         ++step;
-        vTaskDelay(pdMS_TO_TICKS(intro_delay_ms));
+        if(!xTaskDelayUntil(&last_wake, pdMS_TO_TICKS(intro_delay_ms))){
+            Serial.println("Intro task not deleayed");
+        }
     }
 
 
@@ -332,7 +334,9 @@ static void square_task(void *params) {
             // Whether been touched by this plr recently
             bool prev_touching = cur_tk - last_touching[p] < pdMS_TO_TICKS(debounce_ms);
 
-            if(freq_ewma[p] >= goertzel_thresh){
+            // Make sure to check that this frequency is actually dominant, as there
+            // can be overlap
+            if(freq_ewma[p] >= goertzel_thresh && freq_ewma[p] > freq_ewma[!p]){
                 // New touch from empty
                 if(last_plr == -1 && !prev_touching){
                     cooldown_start = cur_tk;
@@ -468,7 +472,17 @@ void setup() {
 
     Serial.println("setup(): starting scheduler...");
     Serial.flush();
+
+
+
+
+    /*delay(50*board_id + 50);*/
     leds.begin();
+    /*delay(200 - 50*board_id);*/
+
+    for(int i = 0; i < 128; ++i){
+        leds.setPixel(i, OFF);
+    }
 
     vTaskStartScheduler();
 }
