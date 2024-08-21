@@ -8,7 +8,8 @@ Goertzel::Goertzel(double targetFreq, double sampleRate, size_t windowSize)
 
 void Goertzel::addSample(double sample) {
     // Chatgpt suggested subtracting old sample here, voodoo magic
-    // I do not understand why that works but it does
+    // Partial explanation here, still not 100% on this personally:
+    // https://dsp.stackexchange.com/questions/94264/why-does-this-sliding-window-goertzel-filter-trick-work
     double s = coeff * s1 - s2 + sample - samples[currentIndex];
     s2 = s1;
     s1 = s;
