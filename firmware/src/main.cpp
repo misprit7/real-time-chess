@@ -61,6 +61,13 @@ const int cooldown_tk = pdMS_TO_TICKS(cooldown_ms);
 int plr_clrs[2] = {RED, BLUE};
 
 const float goertzel_thresh = 15;
+const float goertzel_win_ms = 100;
+
+/******************************************************************************
+ * FFT
+ ******************************************************************************/
+const float freq_sample = 1500; //Hz, must be less than 10000 due to ADC
+double freq_output[2] = { 500, 600 };
 
 /******************************************************************************
  * Hardware Definitions
@@ -108,12 +115,6 @@ SemaphoreHandle_t leds_mut;
 // Hacky, but arbitrary negative ticks so don't have to wait at beginning
 int neg_tick = -pdMS_TO_TICKS(10'000);
 
-/******************************************************************************
- * FFT
- ******************************************************************************/
-const float freq_sample = 1500; //Hz, must be less than 10000 due to ADC
-double freq_output[2] = { 500, 600 };
-unsigned int sampling_period_us;
 
 /******************************************************************************
  * Global variables
@@ -133,6 +134,10 @@ void color_wipe(int color, int wait_ms) {
     }
 }
 
+double calculate_ewma(double previous_ewma, double new_value, double alpha) {
+    return alpha * new_value + (1 - alpha) * previous_ewma;
+}
+
 /******************************************************************************
  * Tasks
  ******************************************************************************/
@@ -147,10 +152,11 @@ static void blink_task(void*) {
 
         digitalWriteFast(arduino::LED_BUILTIN, arduino::HIGH);
         vTaskDelay(pdMS_TO_TICKS(500));
-        Serial.print("JMP 1: ");
-        Serial.println(digitalRead(jmp_pins[0]));
-        Serial.print("JMP 2: ");
-        Serial.println(digitalRead(jmp_pins[1]));
+        /*Serial.println(board_id);*/
+        /*Serial.print("JMP 1: ");*/
+        /*Serial.println(digitalRead(jmp_pins[0]));*/
+        /*Serial.print("JMP 2: ");*/
+        /*Serial.println(digitalRead(jmp_pins[1]));*/
     }
 }
 
@@ -169,13 +175,7 @@ static void led_task(void*) {
 
 static void square_task(void *params) {
     int idx = *((int*) params);
-    /*int delay_ms = 1500 / leds.numPixels();*/
-    /**/
-    /*for (int i=0; i < 8; i++) {*/
-    /*    leds.setPixel(8*idx + i, idx % 2 == 0 ? RED : GREEN);*/
-    /*}*/
-    /*vTaskDelay(pdMS_TO_TICKS(1000));*/
-    sampling_period_us = round(1000000*(1.0/freq_sample));
+    unsigned int sampling_period_us = round(1000000*(1.0/freq_sample));
 
     pinMode(em_pins[idx], arduino::OUTPUT);
     digitalWrite(em_pins[idx], 0);
@@ -187,13 +187,14 @@ static void square_task(void *params) {
     int last_touch[2] = {neg_tick, neg_tick};
     bool cur_touch[2] = {false, false};
 
+    // Test sequence
     /*for (int i=0; i < 8; i++) {*/
     /*    leds.setPixel(8*idx + i, WHITE);*/
     /*}*/
     /*for ever {}*/
 
-
-    Goertzel goertzels[2] = { Goertzel(freq_output[0], freq_sample, 100), Goertzel(freq_output[1], freq_sample, 100) };
+    unsigned int goertzel_win_samples = goertzel_win_ms * freq_sample / 1000;
+    Goertzel goertzels[2] = { Goertzel(freq_output[0], freq_sample, goertzel_win_samples), Goertzel(freq_output[1], freq_sample, goertzel_win_samples) };
     for ever {
         TickType_t cur_tick = xTaskGetTickCount();
         bool on_cooldown[2] = {
@@ -251,7 +252,9 @@ static void square_task(void *params) {
             last_led = cur_tick;
         }
 
-        vTaskDelayUntil(&last_wake, pdUS_TO_TICKS(sampling_period_us));
+        if(!xTaskDelayUntil(&last_wake, pdUS_TO_TICKS(sampling_period_us))){
+            Serial.println("Square task not actually delayed (computation/adc reads probably taking too long)");
+        }
     }
 }
 
@@ -282,7 +285,7 @@ void setup() {
     pinMode(jmp_pins[0], arduino::INPUT_PULLUP);
     pinMode(jmp_pins[1], arduino::INPUT_PULLUP);
 
-    board_id = digitalRead(!jmp_pins[0] + 2 * (!jmp_pins[1]));
+    board_id = !digitalRead(jmp_pins[0]) + 2 * !digitalRead(jmp_pins[1]);
 
 
     if (CrashReport) {
@@ -301,8 +304,8 @@ void setup() {
 
     xTaskCreate(led_task, "led_task", 1024, nullptr, 2, nullptr);
 
-    /*static int freq_idx = board_id == 1 || board_id == 2 ? 0 : 1;*/
-    static int freq_idx = 0;
+    static int freq_idx = board_id == 1 || board_id == 2 ? 0 : 1;
+    /*static int freq_idx = 0;*/
     xTaskCreate(freq_output_task, "freq_output_task", 1024, &freq_idx, 2, nullptr);
 
     static int square_idx[n_sqr];
