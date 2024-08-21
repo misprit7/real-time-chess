@@ -144,7 +144,7 @@ static unsigned int board_id;
  * Helper functions
  ******************************************************************************/
 
-uint32_t hsv_to_rgb(float h, float s, float v) {
+uint32_t hsv_to_rgb(float h, float s, float v, float fade) {
     float r, g, b;
 
     int i = (int)(h * 6);
@@ -161,16 +161,20 @@ uint32_t hsv_to_rgb(float h, float s, float v) {
         case 4: r = t, g = p, b = v; break;
         case 5: r = v, g = p, b = q; break;
     }
+    float reduction = 0.1 * fade;
+    r *= reduction;
+    g *= reduction;
+    b *= reduction;
 
     return ((int)(r * 255) << 16) | ((int)(g * 255) << 8) | (int)(b * 255);
 }
 
-uint32_t get_rainbow_color(int step) {
+uint32_t get_rainbow_color(int step, float fade) {
     float h = (step % 360) / 360.0;  // Cycle hue between 0 and 1
     float s = 1.0;                   // Full saturation
     float v = 0.2;                   // Adjust brightness here (0 to 1)
 
-    return hsv_to_rgb(h, s, v);
+    return hsv_to_rgb(h, s, v, fade);
 }
 
 void color_wipe(int color, int wait_ms) {
@@ -181,53 +185,44 @@ void color_wipe(int color, int wait_ms) {
     }
 }
 
-void color_spiral(int idx, int step){
-    int id, x, y;
-    int xx = 0, yy = 0;
+void color_spiral(int idx, int step, int max_step){
+    float x = 0, y = 0;
     int a = idx % 32, b = idx / 32;
     if(board_id == 0){
-        xx = b;
-        yy = 3 - a;
+        x = b;
+        y = 3 - a;
     }else if(board_id == 1){
-        xx = 3 - a;
-        yy = 3 - b + 4;
+        x = 3 - a;
+        y = 3 - b + 4;
     } else if(board_id == 2){
-        xx = 3 - b + 4;
-        yy = a + 4;
+        x = 3 - b + 4;
+        y = a + 4;
     } else if(board_id == 3){
-        xx = a + 4;
-        yy = b;
+        x = a + 4;
+        y = b;
     }
-    for (int layer = 0; layer < 4; layer++) {
-        for (x = layer; x < 8 - layer; x++) {
-            y = layer;
-            for (id = 0; id < 8; id++) {
-                if(xx == x && yy == y)
-                    leds.setPixel(8*idx + id, get_rainbow_color(step + id));
-            }
-        }
+    /*if(idx == 0 && step % 20 == 0){*/
+    /*    Serial.print(x);*/
+    /*    Serial.print(", ");*/
+    /*    Serial.print(y);*/
+    /*    Serial.print(", ");*/
+    /*    Serial.print(step);*/
+    /*    Serial.print(", ");*/
+    /*    Serial.print(max_step);*/
+    /*    Serial.print(", ");*/
+    /*    Serial.println((atan((step-max_step/2.0)*2/max_step * 3)-atan(-3))*max_step/1.5);*/
+    /*}*/
+    
+    x -= 3.5;
+    y -= 3.5;
 
-        for (y = layer + 1; y < 8 - layer; y++) {
-            x = 8 - layer - 1;
-            for (id = 0; id < 8; id++) {
-                if(xx == x && yy == y)
-                    leds.setPixel(8*idx + id, get_rainbow_color(step + id));
-            }
-        }
-        for (x = 8 - layer - 2; x >= layer; x--) {
-            y = 8 - layer - 1;
-            for (id = 0; id < 8; id++) {
-                if(xx == x && yy == y)
-                    leds.setPixel(8*idx + id, get_rainbow_color(step + id));
-            }
-        }
-        for (y = 8 - layer - 2; y > layer; y--) {
-            x = layer;
-            for (id = 0; id < 8; id++) {
-                if(xx == x && yy == y)
-                    leds.setPixel(8*idx + id, get_rainbow_color(step + id));
-            }
-        }
+    float theta = atan2(y, x);
+
+    for(int i = 0; i < 8; ++i){
+        leds.setPixel(8*idx + i, get_rainbow_color(
+                    (atan((step-max_step/2.0)*2/max_step * 3)-atan(-3))*max_step/1.5 + 40*theta,
+                    min(1.0, 4*(max_step-step)*1.0/max_step)
+                ));
     }
 
 }
@@ -301,10 +296,12 @@ static void square_task(void *params) {
     // Loading screen
     TickType_t t_init = xTaskGetTickCount();
     int step = 0;
-    while(xTaskGetTickCount() - t_init < pdMS_TO_TICKS(100'000)){
-        color_spiral(idx, step);
+    int intro_delay_ms = 10;
+    int intro_ms = 10'000;
+    while(xTaskGetTickCount() - t_init < pdMS_TO_TICKS(intro_ms)){
+        color_spiral(idx, step, intro_ms/intro_delay_ms);
         ++step;
-        vTaskDelay(pdMS_TO_TICKS(100));
+        vTaskDelay(pdMS_TO_TICKS(intro_delay_ms));
     }
 
 
@@ -418,7 +415,7 @@ static void serial_task(void *params) {
             while(serial_in.available()){
                 int incomingByte = serial_in.read();
                 serial_out.write(incomingByte);
-                Serial.write(incomingByte);
+                /*Serial.write(incomingByte);*/
             }
         }
         vTaskDelay(pdMS_TO_TICKS(20));
