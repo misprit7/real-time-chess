@@ -57,7 +57,7 @@
 #define WHITE  0x101010
 #define OFF    0x000000
 
-const int cooldown_ms = 3'000;
+const int cooldown_ms = 10'000;
 const int cooldown_tk = pdMS_TO_TICKS(cooldown_ms);
 int plr_clrs_lock[2] = {INTENSE_RED, INTENSE_BLUE};
 int plr_clrs_unlock[2] = {RED, BLUE};
@@ -70,7 +70,7 @@ const float goertzel_thresh = 10;
 const float goertzel_win_ms = 100;
 
 // Grace time after picking up piece before assuming placed back in same spot
-const float debounce_ms = 1000;
+const float debounce_ms = 500;
 
 /******************************************************************************
  * FFT/Detection
@@ -161,7 +161,7 @@ uint32_t hsv_to_rgb(float h, float s, float v, float fade) {
         case 4: r = t, g = p, b = v; break;
         case 5: r = v, g = p, b = q; break;
     }
-    float reduction = 0.15 * fade;
+    float reduction = 0.25 * fade;
     r *= reduction;
     g *= reduction;
     b *= reduction;
@@ -339,8 +339,8 @@ static void square_task(void *params) {
             if(freq_ewma[p] >= goertzel_thresh && freq_ewma[p] > freq_ewma[!p]){
                 // New touch from empty
                 if(last_plr == -1 && !prev_touching){
-                    cooldown_start = cur_tk;
                     last_plr = p;
+                    cooldown_start = cur_tk;
                 // Reset square
                 } else if(last_plr == p && !on_cooldown){
                     last_plr = -1;
