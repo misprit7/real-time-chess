@@ -57,8 +57,8 @@
 #define WHITE  0x101010
 #define OFF    0x000000
 
-const int cooldown_ms = 10'000;
-const int cooldown_tk = pdMS_TO_TICKS(cooldown_ms);
+const uint32_t cooldown_choices_ms[] = {3'000, 7'000, 12'000};
+static volatile uint32_t cooldown_ms = cooldown_choices_ms[1];
 int plr_clrs_lock[2] = {INTENSE_RED, INTENSE_BLUE};
 int plr_clrs_unlock[2] = {RED, BLUE};
 
@@ -111,8 +111,8 @@ int jmp_pins[2] = { 37, 3 };
  * This is because how I hooked up the pcbs physically happened to be opposite
  * to what I originally planned
  */
-HardwareSerialIMXRT &serial_in = Serial8;
-HardwareSerialIMXRT &serial_out = Serial7;
+HardwareSerialIMXRT &serial_prev = Serial8;
+HardwareSerialIMXRT &serial_next = Serial7;
 
 /******************************************************************************
  * ws2812Serial
@@ -129,9 +129,21 @@ SemaphoreHandle_t leds_mut;
  * FreeRTOS
  ******************************************************************************/
 
+#define n_cooldown_change (1 << 0)
+
 // Hacky, but arbitrary large negative ticks so don't have to wait at beginning
 int neg_tick = -pdMS_TO_TICKS(10'000);
 
+// Task handles
+TaskHandle_t serial_handle;
+
+/******************************************************************************
+ * Inter board communication
+ ******************************************************************************/
+
+enum board_msg {
+    m_cooldown_change = 'c', // format: "cX\n", X is binary encoded cooldown in ms
+};
 
 /******************************************************************************
  * Global variables
@@ -139,6 +151,7 @@ int neg_tick = -pdMS_TO_TICKS(10'000);
 
 // Which board this is, 0 is top left and increases counter clockwise
 static unsigned int board_id;
+static volatile int cooldown_selection = 1;
 
 /******************************************************************************
  * Helper functions
@@ -220,6 +233,7 @@ void color_spiral(int idx, int step, int max_step){
 
     for(int i = 0; i < 8; ++i){
         leds.setPixel(8*idx + i, get_rainbow_color(
+                    /*(atan((step-max_step/2.0)*2/max_step * 3)-atan(-3))*max_step/1.5 + 180/PI*theta + 1000,*/
                     (atan((step-max_step/2.0)*2/max_step * 3)-atan(-3))*max_step/1.5 + 40*theta + 1000,
                     min(1.0, 4*(max_step-step)*1.0/max_step)
                 ));
@@ -293,11 +307,13 @@ static void square_task(void *params) {
     unsigned int goertzel_win_samples = goertzel_win_ms * freq_sample / 1000;
     Goertzel goertzels[2] = { Goertzel(freq_output[0], freq_sample, goertzel_win_samples), Goertzel(freq_output[1], freq_sample, goertzel_win_samples) };
 
+
     // Loading screen
     TickType_t t_init = xTaskGetTickCount();
     int step = 0;
     int intro_delay_ms = 10;
     int intro_ms = 10'000;
+    int ui_ms = 10'000'000;
     while(xTaskGetTickCount() - t_init < pdMS_TO_TICKS(intro_ms)){
         color_spiral(idx, step, intro_ms/intro_delay_ms);
         ++step;
@@ -310,7 +326,8 @@ static void square_task(void *params) {
     // Main task
     for ever {
         TickType_t cur_tk = xTaskGetTickCount();
-        bool on_cooldown = cur_tk - cooldown_start <= cooldown_tk;
+
+        bool on_cooldown = cur_tk - cooldown_start <= pdMS_TO_TICKS(cooldown_ms);
 
         // Only activate ems if on cooldown
         if(on_cooldown){
@@ -371,7 +388,7 @@ static void square_task(void *params) {
                 for (int i=0; i < 8; i++) {
                     // Cooldown is bright
                     if(on_cooldown){
-                        leds.setPixel(8*idx + i, i < 8.0*(cur_tk - cooldown_start)/cooldown_tk - 0.8 ? OFF : plr_clrs_lock[p]);
+                        leds.setPixel(8*idx + i, i < 8.0*(cur_tk - cooldown_start)/pdMS_TO_TICKS(cooldown_ms) - 0.8 ? OFF : plr_clrs_lock[p]);
                     // 
                     } else if(last_plr != -1){
                         leds.setPixel(8*idx + i, plr_clrs_unlock[p]);
@@ -384,6 +401,32 @@ static void square_task(void *params) {
             } else Serial.println("Failed to take led mutex!");
             last_led = cur_tk;
         }
+
+        // Read cooldown interface
+        /*if(board_id == 0 && cur_tk - t_init < pdMS_TO_TICKS(intro_ms + ui_ms)){*/
+        /*    int clrs[] = {RED, YELLOW, GREEN, WHITE};*/
+        /*    int clrs_intense[] = {INTENSE_RED, INTENSE_YELLOW, INTENSE_GREEN, INTENSE_WHITE};*/
+        /**/
+        /*    bool cur_touching = last_touching[0] == (int)cur_tk || last_touching[1] == (int)cur_tk;*/
+        /**/
+        /*    if(idx % 4 == 0){*/
+        /*        int i = idx/4;*/
+        /*        // No cooldown if ui button*/
+        /*        cooldown_start = neg_tick;*/
+        /*        if(cur_touching && i < 3){*/
+        /*            cooldown_selection = i;*/
+        /*            cooldown_ms = cooldown_choices_ms[i];*/
+        /*            xTaskNotify(serial_handle, n_cooldown_change, eSetBits);*/
+        /*        }*/
+        /*        if(xSemaphoreTake(leds_mut, pdMS_TO_TICKS(100))){*/
+        /*            for(int j = 0; j < 8; ++j){*/
+        /*                leds.setPixel(8*idx + j, cooldown_selection == i ? clrs_intense[i] : clrs[i]);*/
+        /*            }*/
+        /*            xSemaphoreGive(leds_mut);*/
+        /*        } else Serial.println("Failed to take led mutex!");*/
+        /*    }*/
+        /*}*/
+
 
         if(!xTaskDelayUntil(&last_wake, pdUS_TO_TICKS(sampling_period_us))){
             // This actually gets called pretty often if you try playing around with sample rate/tick rate
@@ -411,15 +454,51 @@ static void freq_output_task(void *params) {
 static void serial_task(void *params) {
     (void) params;
 
+    char prev_msg[100];
+    uint32_t prev_msg_len = 0;
+
     for ever {
+        // Check for notifications
+        uint32_t notification;
+        if(xTaskNotifyWait(0, 0xFFFFFFFF, &notification, 0)){
+            Serial.println("Got notification!");
+            if(notification & n_cooldown_change){
+                Serial.println("Cooldown notification!");
+                serial_next.write(m_cooldown_change);
+                serial_next.write((cooldown_ms >> 24) & 0xFF);
+                serial_next.write((cooldown_ms >> 16) & 0xFF);
+                serial_next.write((cooldown_ms >> 8) & 0xFF);
+                serial_next.write(cooldown_ms & 0xFF); 
+                serial_next.println();
+            }
+        }
         if(board_id == 0){
-            serial_out.println("Hello world");
+            /*serial_next.println("Hello world");*/
         } else {
             // Forward message
-            while(serial_in.available()){
-                int incomingByte = serial_in.read();
-                serial_out.write(incomingByte);
-                /*Serial.write(incomingByte);*/
+            while(serial_prev.available()){
+                unsigned char in_byte = serial_prev.read();
+                serial_next.write(in_byte);
+
+                if(prev_msg_len + 1 < sizeof prev_msg / sizeof prev_msg[0])
+                    prev_msg[prev_msg_len++] = in_byte;
+
+                if(in_byte == '\n'){
+                    switch(prev_msg[0]) {
+                        case m_cooldown_change:
+                            Serial.println("Changing cooldown");
+                            if(prev_msg_len >= 5)
+                                cooldown_ms = prev_msg[1] << 24 |
+                                    prev_msg[2] << 16 |
+                                    prev_msg[2] << 8 |
+                                    prev_msg[3];
+                            break;
+                        default:
+                            break;
+                    }
+                    prev_msg_len = 0;
+                }
+                Serial.write(in_byte);
             }
         }
         vTaskDelay(pdMS_TO_TICKS(20));
@@ -432,9 +511,10 @@ static void serial_task(void *params) {
 
 FLASHMEM __attribute__((noinline))
 void setup() {
+
     Serial.begin(115200);
-    serial_in.begin(115200);
-    serial_out.begin(115200);
+    serial_prev.begin(115200);
+    serial_next.begin(115200);
     delay(200);
 
     pinMode(jmp_pins[0], arduino::INPUT_PULLUP);
@@ -459,7 +539,6 @@ void setup() {
     xTaskCreate(led_task, "led_task", 1024, nullptr, 2, nullptr);
 
     static int freq_idx = board_id == 1 || board_id == 2 ? 0 : 1;
-    /*static int freq_idx = 0;*/
     xTaskCreate(freq_output_task, "freq_output_task", 1024, &freq_idx, 2, nullptr);
 
     static int square_idx[n_sqr];
@@ -468,7 +547,7 @@ void setup() {
         xTaskCreate(square_task, "square_task", 2048, &square_idx[i], 2, nullptr);
     }
 
-    xTaskCreate(serial_task, "serial_task", 1024, nullptr, 2, nullptr);
+    xTaskCreate(serial_task, "serial_task", 1024, nullptr, 2, &serial_handle);
 
     Serial.println("setup(): starting scheduler...");
     Serial.flush();
