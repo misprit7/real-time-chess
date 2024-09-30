@@ -53,14 +53,21 @@
 #define BLUE   0x000016
 #define YELLOW 0x101400
 #define PINK   0x120009
-#define ORANGE 0x100400
+#define ORANGE 0x100600
+#define PURPLE 0x100020
 #define WHITE  0x101010
 #define OFF    0x000000
+
+#define GOLD   0xAE8625
+#define SILVER   0xC0C0C0
 
 const uint32_t cooldown_choices_ms[] = {3'000, 7'000, 12'000};
 static volatile uint32_t cooldown_ms = cooldown_choices_ms[1];
 int plr_clrs_lock[2] = {INTENSE_RED, INTENSE_BLUE};
-int plr_clrs_unlock[2] = {RED, BLUE};
+/*int plr_clrs_lock[2] = {GOLD, SILVER};*/
+/*int plr_clrs_unlock[2] = {RED, BLUE};*/
+/*int plr_clrs_unlock[2] = {ORANGE, ORANGE};*/
+int plr_clrs_unlock[2] = {PINK, PINK};
 
 // Threshold for ewma of goertzel filter before considered touching
 // Not sure if goertzel filter isn't scale invariant to e.g. window size,
@@ -156,6 +163,13 @@ static volatile int cooldown_selection = 1;
 /******************************************************************************
  * Helper functions
  ******************************************************************************/
+
+uint32_t change_intensity(uint32_t col, float mult){
+    uint32_t red = ((col >> 16) & 0xFF) * mult;
+    uint32_t green = ((col >> 8) & 0xFF) * mult;
+    uint32_t blue = (col & 0xFF) * mult;
+    return (red << 16) | (green << 8) | blue;
+}
 
 uint32_t hsv_to_rgb(float h, float s, float v, float fade) {
     float r, g, b;
@@ -388,8 +402,17 @@ static void square_task(void *params) {
                 for (int i=0; i < 8; i++) {
                     // Cooldown is bright
                     if(on_cooldown){
-                        leds.setPixel(8*idx + i, i < 8.0*(cur_tk - cooldown_start)/pdMS_TO_TICKS(cooldown_ms) - 0.8 ? OFF : plr_clrs_lock[p]);
-                    // 
+                        float fraction_through = (cur_tk - cooldown_start) * 1. /pdMS_TO_TICKS(cooldown_ms);
+                        float min_intensity = 0.05;
+                        if(i == (int) (fraction_through * 8)){
+                            /*float intensity_modifier = (1-(fraction_through - i / 8.) * 8) * (1 - min_intensity) + min_intensity;*/
+                            float intensity_modifier = (1-(fraction_through - i / 8.) * 8) * (1 - min_intensity) + min_intensity;
+                            leds.setPixel(8*idx + i, change_intensity(plr_clrs_lock[p], intensity_modifier));
+                        }else if( i > (int) (fraction_through * 8)){
+                            leds.setPixel(8*idx + i, plr_clrs_lock[p]);
+                        } else {
+                            leds.setPixel(8*idx + i, change_intensity(plr_clrs_lock[p], min_intensity));
+                        }
                     } else if(last_plr != -1){
                         leds.setPixel(8*idx + i, plr_clrs_unlock[p]);
                     } else {
