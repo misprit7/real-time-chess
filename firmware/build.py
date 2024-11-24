@@ -14,12 +14,15 @@ import cv2
 import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 import argparse
 
 
 video_path = './assets/rickroll_square.mp4'
+# video_path = './assets/bad-apple.mp4'
 code_gen_path = './src/video.c'
 files, ranks, leds = (8, 8, 8)
+frame_skip = 1
 
 parser = argparse.ArgumentParser(description="Generates video file for board")
 parser.add_argument("-v", "--visual", action="store_true", help="Visualize frame")
@@ -27,8 +30,8 @@ parser.add_argument("-v", "--visual", action="store_true", help="Visualize frame
 args = parser.parse_args()
 
 # Set 1
-start_frame = 10
-end_frame = 11
+start_frame = 1
+end_frame = 200
 # Set 2
 # start_frame = 326
 # end_frame = 326*2
@@ -60,6 +63,9 @@ def write_frame(frame_information: Tuple[int, cv2.VideoCapture]):
     y, x, _ = frame.shape
     pixel_row = 0
 
+    if args.visual:
+        global pixels
+        pixels += [[]]
     
     frame_str = '    {\n'
     for i in range(files):
@@ -86,10 +92,9 @@ def write_frame(frame_information: Tuple[int, cv2.VideoCapture]):
                 b = pixel[0]
 
                 if args.visual:
-                    global pixels
-                    pixels += [[x_cm, y_cm, r, g, b]]
+                    pixels[-1] += [[x_cm, y_cm, r, g, b]]
 
-                frame_str += f'0b{r:02x}{g:02x}{b:02x}'
+                frame_str += f'0x{r:02x}{g:02x}{b:02x}'
                 frame_str += ', '
             frame_str += '},\n'
 
@@ -110,7 +115,7 @@ def generate_frames(video: cv2.VideoCapture):
         if i < start_frame:
             continue
 
-        if i % 2 == 0:
+        if i % frame_skip != 0:
             continue
 
         if frame is None:
@@ -132,29 +137,28 @@ if __name__ == '__main__':
 
     if args.visual:
 
-        cv2.imshow('frame', last_frame)
+        # cv2.imshow('frame', last_frame)
 
-        pixels = np.array(pixels)
-        print(pixels)
+        fig, ax = plt.subplots()
+        scatter = ax.scatter([], [])
+        ax.set_aspect('equal', adjustable='box')
 
-        # Extract positions and colors
-        x = pixels[:, 0]
-        y = pixels[:, 1]
-        colors = pixels[:, 2:] / 255.0  # Normalize RGB values to [0, 1]
+        plt.xlim(0, 40)
+        plt.ylim(0, 40)
 
-        # Create the scatter plot
-        plt.scatter(x, y, c=colors, s=100)  # s=100 controls the dot size
+        def update(pix):
+            pix = np.array(pix)
+            x = pix[:, 0]
+            y = pix[:, 1]
+            colors = pix[:, 2:] / 255.0
+            scatter.set_offsets(pix[:, 0:2])
+            scatter.set_facecolors(colors)
+            return scatter,
 
-        # Ensure equal axis scaling
-        plt.axis('equal')
-
-        # Add gridlines for visual reference
-        plt.grid(True, linestyle='--', alpha=0.5)
-
-        # Show the plot
-        plt.title("Scatter Plot with RGB Colors")
-        plt.xlabel("X-axis")
-        plt.ylabel("Y-axis")
+        # Create the animation
+        ani = FuncAnimation(
+            fig, update, frames=pixels, interval=1000 / (video.get(cv2.CAP_PROP_FPS) / frame_skip), blit=True
+        )
         plt.show()
     
         
@@ -166,11 +170,18 @@ if __name__ == '__main__':
         # f.write(f'pub const FRAMES: [[[u32; graphics::WORDS]; graphics::HEIGHT]; {len(frames)}] = [\n')
 
         f.write(f'#include <stdint.h>\n')
+        f.write(f'#include <Arduino.h>\n')
+        f.write(f'#include <video_config.h>\n')
         f.write('\n')
-        f.write(f'uint32_t num_frames = {len(frames)}\n')
+        f.write(f'const uint32_t num_frames = {len(frames)};\n')
+        f.write(f'const float frame_rate = {video.get(cv2.CAP_PROP_FPS) / frame_skip};\n')
         f.write('\n')
-        f.write(f'uint32_t frames[{len(frames)}][{files}][{ranks}][{leds}] = {{\n')
+        f.write(f'#if LINK_VIDEO\n')
+        f.write('\n')
+        f.write(f'const uint32_t frames[{len(frames)}][{files}][{ranks}][{leds}] PROGMEM = {{\n')
         for _, frame in frames:
             f.write(frame)
-
         f.write('};\n')
+        f.write(f'#else\n')
+        f.write(f'const uint32_t frames[0][{files}][{ranks}][{leds}] PROGMEM = {{}};\n')
+        f.write(f'#endif\n')

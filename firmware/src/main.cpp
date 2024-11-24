@@ -183,7 +183,8 @@ static unsigned int board_id;
 static volatile int cooldown_selection = 1;
 
 extern const uint32_t num_frames;
-extern uint32_t frames[10000][8][8][8];
+extern const float frame_rate;
+extern const uint32_t frames[1000][8][8][8];
 
 /******************************************************************************
  * Helper functions
@@ -248,6 +249,22 @@ uint32_t change_intensity(uint32_t col, float mult){
     return (red << 16) | (green << 8) | blue;
 }
 
+uint32_t norm_intensity(uint32_t col, float norm){
+    uint32_t r = ((col >> 16) & 0xFF);
+    uint32_t g = ((col >> 8) & 0xFF);
+    uint32_t b = (col & 0xFF);
+    float brightness = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    float mult = norm / max(1, brightness);
+    r *= mult;
+    g *= mult;
+    b *= mult;
+    float gamma = 2.2;
+    r = int(pow(r / 255.0, gamma) * 255);
+    g = int(pow(g / 255.0, gamma) * 255);
+    b = int(pow(b / 255.0, gamma) * 255);
+    return (r << 16) | (g << 8) | b;
+}
+
 uint32_t hsv_to_rgb(float h, float s, float v, float fade) {
     float r, g, b;
 
@@ -296,10 +313,6 @@ void color_spiral(int idx, int step, int max_step){
         coord_t coord = idx_to_coord(idx, i);
         
         float theta = atan2(coord.y_cm - coord_center.y_cm, coord.x_cm - coord_center.x_cm);// + 1.5 * PI;
-        /*leds.setPixel(8*idx + i, get_rainbow_color(*/
-        /*            (atan((step-max_step/2.0)*2/max_step * 3)-atan(-3))*max_step/1.5 + 180.0/PI*theta + 1000,*/
-        /*            min(1.0, 4.0*(max_step-step)/max_step)*/
-        /*        ));*/
         float time_adjust = (atan((step-max_step/2.0)*2/max_step * 3)-atan(-3))*max_step/500;
         float fade = min(1.0, 4.0*(max_step-step)/max_step);
         leds.setPixel(8*idx + i, get_rainbow_color(fmod(theta / 2.0 / PI + time_adjust + 1000, 1), fade));
@@ -322,6 +335,16 @@ void color_spiral(int idx, int step, int max_step){
         /*}*/
     }
 
+}
+
+void play_video(int idx, int frame){
+    /*frame = min(frame, num_frames-1);*/
+    frame = frame % num_frames;
+    for(int i = 0; i < 8; ++i){
+        coord_t coord = idx_to_coord(idx, i);
+
+        leds.setPixel(8*idx + i, norm_intensity(frames[frame][coord.file][coord.rank][i], 60));
+    }
 }
 
 double calculate_ewma(double previous_ewma, double new_value, double alpha) {
@@ -401,11 +424,13 @@ static void square_task(void *params) {
     int step = 0;
     int intro_delay_ms = 10;
     /*int intro_delay_ms = 1000;*/
-    int intro_ms = 10'000;
-    /*int intro_ms = 100000'000;*/
+    /*int intro_ms = 10'000;*/
+    int intro_ms = 100000'000;
     int ui_ms = 10'000'000;
     while(xTaskGetTickCount() - t_init < pdMS_TO_TICKS(intro_ms)){
-        color_spiral(idx, step, intro_ms/intro_delay_ms);
+        /*color_spiral(idx, step, intro_ms/intro_delay_ms);*/
+        play_video(idx, (int)(pdTICKS_TO_MS(xTaskGetTickCount() - t_init) / 1000.0 * frame_rate));
+        /*play_video(idx, step);*/
         ++step;
         if(!xTaskDelayUntil(&last_wake, pdMS_TO_TICKS(intro_delay_ms))){
             Serial.println("Intro task not deleayed");
