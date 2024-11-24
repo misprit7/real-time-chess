@@ -143,12 +143,12 @@ HardwareSerialIMXRT &serial_next = Serial7;
 /******************************************************************************
  * ws2812Serial
  ******************************************************************************/
-const int numled = 128;
+const int num_leds = 128;
 
-byte drawingMemory[numled*3];         //  3 bytes per LED
-DMAMEM byte displayMemory[numled*12]; // 12 bytes per LED
+byte drawingMemory[num_leds*3];         //  3 bytes per LED
+DMAMEM byte displayMemory[num_leds*12]; // 12 bytes per LED
 
-WS2812Serial leds(numled, displayMemory, drawingMemory, led_pin, WS2812_GRB);
+WS2812Serial leds(num_leds, displayMemory, drawingMemory, led_pin, WS2812_GRB);
 SemaphoreHandle_t leds_mut;
 
 /******************************************************************************
@@ -181,6 +181,9 @@ enum board_msg {
 // Which board this is, 0 is top left and increases counter clockwise
 static unsigned int board_id;
 static volatile int cooldown_selection = 1;
+
+extern const uint32_t num_frames;
+extern uint32_t frames[10000][8][8][8];
 
 /******************************************************************************
  * Helper functions
