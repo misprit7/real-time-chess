@@ -274,7 +274,7 @@ uint32_t hsv_to_rgb(float h, float s, float v, float fade) {
 uint32_t get_rainbow_color(float h, float fade) {
     /*float h = (step % 360) / 360.0;  // Cycle hue between 0 and 1*/
     float s = 1.0;                   // Full saturation
-    float v = 0.2;                   // Adjust brightness here (0 to 1)
+    float v = 0.3;                   // Adjust brightness here (0 to 1)
 
     return hsv_to_rgb(h, s, v, fade);
 }
@@ -297,7 +297,9 @@ void color_spiral(int idx, int step, int max_step){
         /*            (atan((step-max_step/2.0)*2/max_step * 3)-atan(-3))*max_step/1.5 + 180.0/PI*theta + 1000,*/
         /*            min(1.0, 4.0*(max_step-step)/max_step)*/
         /*        ));*/
-        leds.setPixel(8*idx + i, get_rainbow_color(fmod(theta / 2.0 / PI + 1000 + 45, 1),1));
+        float time_adjust = (atan((step-max_step/2.0)*2/max_step * 3)-atan(-3))*max_step/500;
+        float fade = min(1.0, 4.0*(max_step-step)/max_step);
+        leds.setPixel(8*idx + i, get_rainbow_color(fmod(theta / 2.0 / PI + time_adjust + 1000, 1), fade));
 
         /*if(coord.file == 0 && coord.rank == 3){*/
         /*    Serial.print("file: ");*/
@@ -394,10 +396,10 @@ static void square_task(void *params) {
     // Loading screen
     TickType_t t_init = xTaskGetTickCount();
     int step = 0;
-    /*int intro_delay_ms = 10;*/
-    int intro_delay_ms = 1000;
-    /*int intro_ms = 10'000;*/
-    int intro_ms = 100000'000;
+    int intro_delay_ms = 10;
+    /*int intro_delay_ms = 1000;*/
+    int intro_ms = 10'000;
+    /*int intro_ms = 100000'000;*/
     int ui_ms = 10'000'000;
     while(xTaskGetTickCount() - t_init < pdMS_TO_TICKS(intro_ms)){
         color_spiral(idx, step, intro_ms/intro_delay_ms);
