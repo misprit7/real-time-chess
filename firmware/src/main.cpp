@@ -79,6 +79,18 @@ const float goertzel_win_ms = 100;
 // Grace time after picking up piece before assuming placed back in same spot
 const float debounce_ms = 500;
 
+const bool upside_down_mode = false;
+
+/******************************************************************************
+ * Structs
+ ******************************************************************************/
+typedef struct coord_t {
+    int32_t rank;
+    int32_t file;
+    float x_cm = 0;
+    float y_cm = 0;
+} coord_t;
+
 /******************************************************************************
  * FFT/Detection
  ******************************************************************************/
@@ -89,7 +101,6 @@ double freq_output[2] = { 500, 600 };
  * Hardware Definitions
  ******************************************************************************/
 // All taken from kicad schematic
-
 const int n_sqr = 16;
 
 int em_pins[n_sqr] = {
@@ -105,7 +116,15 @@ int sens_pins[n_sqr] = {
     22, 23, 24, 25,
     26, 27, 38, 39,
 };
-SemaphoreHandle_t adc_mut;
+
+const float square_cm = 5.0;
+const float square_center_to_led_cm = 1.8;
+const coord_t coord_center = {
+    .rank = -1,
+    .file = -1,
+    .x_cm = 4 * square_cm,
+    .y_cm = 4 * square_cm,
+};
 
 int freq_pin = 2;
 
@@ -141,6 +160,9 @@ SemaphoreHandle_t leds_mut;
 // Hacky, but arbitrary large negative ticks so don't have to wait at beginning
 int neg_tick = -pdMS_TO_TICKS(10'000);
 
+// Semaphores
+SemaphoreHandle_t adc_mut;
+
 // Task handles
 TaskHandle_t serial_handle;
 
@@ -164,6 +186,58 @@ static volatile int cooldown_selection = 1;
  * Helper functions
  ******************************************************************************/
 
+// idx is index of square on board, i is pixel
+// i=-1 => center of square
+coord_t idx_to_coord(uint32_t idx, int32_t i = -1){
+    coord_t ret;
+    float dx = 0, dy = 0;
+    if(i != -1){
+        float led_theta = i * 2.0 * PI / 8.0;
+        dx = -square_center_to_led_cm * cos(led_theta);
+        dy = -square_center_to_led_cm * sin(led_theta);
+    }
+    float old_dx = dx;
+    switch(board_id) {
+        case 0:
+            ret.rank = (idx % 4) + 4;
+            ret.file = idx / 4;
+            break;
+        case 1:
+            ret.rank = (idx / 4);
+            ret.file = 3 - (idx % 4);
+            dx = -dy;
+            dy = old_dx;
+            break;
+        case 2:
+            ret.rank = 3 - (idx % 4);
+            ret.file = 7 - (idx / 4);
+            dx = - dx;
+            dy = -dy;
+            break;
+        case 3:
+            ret.rank = 7 - (idx / 4);
+            ret.file = 4 + (idx % 4);
+            dx = dy;
+            dy = -old_dx;
+            break;
+    }
+    ret.x_cm = ret.file * square_cm + dx + square_cm / 2.0;
+    ret.y_cm = ret.rank * square_cm + dy + square_cm / 2.0;
+
+    /*if(ret.file == ret.rank && i == 0){*/
+    /*    float led_theta = i * 2.0 * PI / 8.0;*/
+    /*    dx = -square_center_to_led_cm * cos(led_theta);*/
+    /*    dy = -square_center_to_led_cm * sin(led_theta);*/
+    /*    Serial.print("dx: ");*/
+    /*    Serial.print(dx);*/
+    /*    Serial.print(", dy: ");*/
+    /*    Serial.print(dy);*/
+    /*    Serial.println();*/
+    /*}*/
+
+    return ret;
+}
+
 uint32_t change_intensity(uint32_t col, float mult){
     uint32_t red = ((col >> 16) & 0xFF) * mult;
     uint32_t green = ((col >> 8) & 0xFF) * mult;
@@ -186,6 +260,7 @@ uint32_t hsv_to_rgb(float h, float s, float v, float fade) {
         case 2: r = p, g = v, b = t; break;
         case 3: r = p, g = q, b = v; break;
         case 4: r = t, g = p, b = v; break;
+        default:
         case 5: r = v, g = p, b = q; break;
     }
     float reduction = 0.25 * fade;
@@ -196,8 +271,8 @@ uint32_t hsv_to_rgb(float h, float s, float v, float fade) {
     return ((int)(r * 255) << 16) | ((int)(g * 255) << 8) | (int)(b * 255);
 }
 
-uint32_t get_rainbow_color(int step, float fade) {
-    float h = (step % 360) / 360.0;  // Cycle hue between 0 and 1
+uint32_t get_rainbow_color(float h, float fade) {
+    /*float h = (step % 360) / 360.0;  // Cycle hue between 0 and 1*/
     float s = 1.0;                   // Full saturation
     float v = 0.2;                   // Adjust brightness here (0 to 1)
 
@@ -213,44 +288,33 @@ void color_wipe(int color, int wait_ms) {
 }
 
 void color_spiral(int idx, int step, int max_step){
-    float x = 0, y = 0;
-    int a = idx % 32, b = idx / 32;
-    if(board_id == 0){
-        x = b;
-        y = 3 - a;
-    }else if(board_id == 1){
-        x = 3 - a;
-        y = 3 - b + 4;
-    } else if(board_id == 2){
-        x = 3 - b + 4;
-        y = a + 4;
-    } else if(board_id == 3){
-        x = a + 4;
-        y = b;
-    }
-    /*if(idx == 0 && step % 20 == 0){*/
-    /*    Serial.print(x);*/
-    /*    Serial.print(", ");*/
-    /*    Serial.print(y);*/
-    /*    Serial.print(", ");*/
-    /*    Serial.print(step);*/
-    /*    Serial.print(", ");*/
-    /*    Serial.print(max_step);*/
-    /*    Serial.print(", ");*/
-    /*    Serial.println((atan((step-max_step/2.0)*2/max_step * 3)-atan(-3))*max_step/1.5);*/
-    /*}*/
-    
-    x -= 3.5;
-    y -= 3.5;
-
-    float theta = atan2(y, x);
 
     for(int i = 0; i < 8; ++i){
-        leds.setPixel(8*idx + i, get_rainbow_color(
-                    /*(atan((step-max_step/2.0)*2/max_step * 3)-atan(-3))*max_step/1.5 + 180/PI*theta + 1000,*/
-                    (atan((step-max_step/2.0)*2/max_step * 3)-atan(-3))*max_step/1.5 + 40*theta + 1000,
-                    min(1.0, 4*(max_step-step)*1.0/max_step)
-                ));
+        coord_t coord = idx_to_coord(idx, i);
+        
+        float theta = atan2(coord.y_cm - coord_center.y_cm, coord.x_cm - coord_center.x_cm);// + 1.5 * PI;
+        /*leds.setPixel(8*idx + i, get_rainbow_color(*/
+        /*            (atan((step-max_step/2.0)*2/max_step * 3)-atan(-3))*max_step/1.5 + 180.0/PI*theta + 1000,*/
+        /*            min(1.0, 4.0*(max_step-step)/max_step)*/
+        /*        ));*/
+        leds.setPixel(8*idx + i, get_rainbow_color(fmod(theta / 2.0 / PI + 1000 + 45, 1),1));
+
+        /*if(coord.file == 0 && coord.rank == 3){*/
+        /*    Serial.print("file: ");*/
+        /*    Serial.print(coord.file);*/
+        /*    Serial.print(", rank: ");*/
+        /*    Serial.print(coord.rank);*/
+        /*    Serial.print(", i:");*/
+        /*    Serial.print(i);*/
+        /*    Serial.print(", x_cm: ");*/
+        /*    Serial.print(coord.x_cm);*/
+        /*    Serial.print(", y_cm: ");*/
+        /*    Serial.print(coord.y_cm);*/
+        /*    Serial.print(", ");*/
+        /*    Serial.print(theta);*/
+        /*    Serial.print(", ");*/
+        /*    Serial.println(((unsigned int)(180.0/PI*theta / 3.0 + 1000 + 45) % 180) / 180.0);*/
+        /*}*/
     }
 
 }
@@ -317,6 +381,11 @@ static void square_task(void *params) {
     // Representation invariant: cooldown_start > 0 => last_plr != -1
     TickType_t cooldown_start = neg_tick;
     int last_plr = -1; // -1 for empty square
+    uint8_t rank = idx_to_coord(idx).rank;
+    if(rank <= 1)
+        last_plr = 0;
+    else if(rank >= 6)
+        last_plr = 1;
 
     unsigned int goertzel_win_samples = goertzel_win_ms * freq_sample / 1000;
     Goertzel goertzels[2] = { Goertzel(freq_output[0], freq_sample, goertzel_win_samples), Goertzel(freq_output[1], freq_sample, goertzel_win_samples) };
@@ -325,8 +394,10 @@ static void square_task(void *params) {
     // Loading screen
     TickType_t t_init = xTaskGetTickCount();
     int step = 0;
-    int intro_delay_ms = 10;
-    int intro_ms = 10'000;
+    /*int intro_delay_ms = 10;*/
+    int intro_delay_ms = 1000;
+    /*int intro_ms = 10'000;*/
+    int intro_ms = 100000'000;
     int ui_ms = 10'000'000;
     while(xTaskGetTickCount() - t_init < pdMS_TO_TICKS(intro_ms)){
         color_spiral(idx, step, intro_ms/intro_delay_ms);
@@ -344,7 +415,7 @@ static void square_task(void *params) {
         bool on_cooldown = cur_tk - cooldown_start <= pdMS_TO_TICKS(cooldown_ms);
 
         // Only activate ems if on cooldown
-        if(on_cooldown){
+        if(on_cooldown || (upside_down_mode && last_plr != -1)){
             digitalWrite(em_pins[idx], 1);
         } else {
             digitalWrite(em_pins[idx], 0);
