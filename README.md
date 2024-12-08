@@ -7,7 +7,7 @@
   A physical chess board without the concept of turns
 </h2>
 <h2 align="center">
-  Video explanation: [Coming soon!](https://youtu.be/y7VtSK23_Jg)
+  Video explanation: https://youtu.be/y7VtSK23_Jg
 </h2>
 
 # Pitch
