@@ -424,13 +424,12 @@ static void square_task(void *params) {
     int step = 0;
     int intro_delay_ms = 10;
     /*int intro_delay_ms = 1000;*/
-    /*int intro_ms = 10'000;*/
-    int intro_ms = 100000'000;
+    int intro_ms = 10'000;
+    /*int intro_ms = 100000'000;*/
     int ui_ms = 10'000'000;
     while(xTaskGetTickCount() - t_init < pdMS_TO_TICKS(intro_ms)){
-        /*color_spiral(idx, step, intro_ms/intro_delay_ms);*/
-        play_video(idx, (int)(pdTICKS_TO_MS(xTaskGetTickCount() - t_init) / 1000.0 * frame_rate));
-        /*play_video(idx, step);*/
+        color_spiral(idx, step, intro_ms/intro_delay_ms);
+        /*play_video(idx, (int)(pdTICKS_TO_MS(xTaskGetTickCount() - t_init) / 1000.0 * frame_rate));*/
         ++step;
         if(!xTaskDelayUntil(&last_wake, pdMS_TO_TICKS(intro_delay_ms))){
             Serial.println("Intro task not deleayed");
